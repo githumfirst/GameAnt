@@ -11,16 +11,24 @@
         "id": "game-2",
         "title": "Block Buster",
         "thumbnail": "/thumbnails/game2.jpg",
-        "type": "android",
+        "type": "html",
         "url": "https://blockgame-e2h.pages.dev/",
         "description": "Get ready for an explosive arcade experience!"
     },
     {
         "id": "game-3",
-        "title": "Neon Racer",
-        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Neon+Racer",
-        "type": "html",
-        "url": "/games/neon-racer/index.html",
-        "description": "High speed racing with neon visuals."
+        "title": "Chicken Fight",
+        "thumbnail": "/thumbnails/game3.jpg",
+        "type": "Android",
+        "url": "https://play.google.com/store/apps/details?id=com.nolGaeMi.zoningFlappyBird",
+        "description": "Chicken drems to fly and win fight!!!"
+    },
+    {
+        "id": "game-4",
+        "title": "Monster Fly",
+        "thumbnail": "/thumbnails/game4.jpg",
+        "type": "Android",
+        "url": "https://play.google.com/store/apps/details?id=com.nolgaemi.monster",
+        "description": "Unleash a barrage of bizarre, monstrous projectiles!"
     }
 ]
