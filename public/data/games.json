@@ -1,11 +1,11 @@
 [
     {
         "id": "game-1",
-        "title": "Space Adventure",
-        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Space+Adventure",
+        "title": "Soldiers Battle",
+        "thumbnail": "/thumbnails/game1.jpg",
         "type": "html",
-        "url": "/games/space-adventure/index.html",
-        "description": "Explore the galaxy in this thrilling html5 adventure."
+        "url": "https://aiuprising.pages.dev",
+        "description": "Crazy Strategy, brain and guessing Game"
     },
     {
         "id": "game-2",
