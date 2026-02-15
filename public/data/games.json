@@ -1,0 +1,26 @@
+[
+    {
+        "id": "game-1",
+        "title": "Space Adventure",
+        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Space+Adventure",
+        "type": "html",
+        "url": "/games/space-adventure/index.html",
+        "description": "Explore the galaxy in this thrilling html5 adventure."
+    },
+    {
+        "id": "game-2",
+        "title": "Super Puzzle",
+        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Super+Puzzle",
+        "type": "android",
+        "url": "https://play.google.com/store/apps",
+        "description": "Solve mind-bending puzzles on your phone."
+    },
+    {
+        "id": "game-3",
+        "title": "Neon Racer",
+        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Neon+Racer",
+        "type": "html",
+        "url": "/games/neon-racer/index.html",
+        "description": "High speed racing with neon visuals."
+    }
+]
