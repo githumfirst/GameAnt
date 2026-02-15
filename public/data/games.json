@@ -5,15 +5,15 @@
         "thumbnail": "/thumbnails/game1.jpg",
         "type": "html",
         "url": "https://aiuprising.pages.dev",
-        "description": "Crazy Strategy, brain and guessing Game"
+        "description": "Crazy Strategy, brain and guessing Game!"
     },
     {
         "id": "game-2",
-        "title": "Super Puzzle",
-        "thumbnail": "https://placehold.co/600x400/1e293b/white?text=Super+Puzzle",
+        "title": "Block Buster",
+        "thumbnail": "/thumbnails/game2.jpg",
         "type": "android",
-        "url": "https://play.google.com/store/apps",
-        "description": "Solve mind-bending puzzles on your phone."
+        "url": "https://blockgame-e2h.pages.dev/",
+        "description": "Get ready for an explosive arcade experience!"
     },
     {
         "id": "game-3",
