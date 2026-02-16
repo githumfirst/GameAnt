@@ -48,8 +48,8 @@ function App() {
                 <button
                     onClick={() => setFilter('html')}
                     className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'html'
-                            ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
-                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
+                        ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
                         }`}
                 >
                     Both
@@ -57,8 +57,8 @@ function App() {
                 <button
                     onClick={() => setFilter('all')}
                     className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'all'
-                            ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
-                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
+                        ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
                         }`}
                 >
                     Mobile
@@ -97,7 +97,7 @@ function App() {
                                         : 'bg-blue-500/10 text-blue-400 ring-blue-500/20'
                                         }`}>
                                         {game.type === 'android' ? <Smartphone size={10} /> : <Globe size={10} />}
-                                        {game.type === 'android' ? 'Android' : 'Web Browser'}
+                                        {game.type === 'html' ? 'Desktop/Mobile' : 'Android'}
                                     </span>
                                 </div>
                             </div>
@@ -127,8 +127,12 @@ function App() {
             </main>
 
             <footer className="mt-20 border-t border-slate-800 py-10">
-                <div className="text-center text-slate-500 text-sm">
-                    &copy; {new Date().getFullYear()} GameAnt's PlayGround. All rights reserved.
+                <div className="text-center text-slate-500 text-sm flex flex-col items-center gap-4">
+                    <p>&copy; {new Date().getFullYear()} GameAnt's PlayGround. All rights reserved.</p>
+                    <div className="flex gap-4">
+                        <a href="/about.html" target="_blank" className="hover:text-brand-accent transition-colors">About Us</a>
+                        <a href="/privacy.html" target="_blank" className="hover:text-brand-accent transition-colors">Privacy Policy</a>
+                    </div>
                 </div>
             </footer>
         </div>
