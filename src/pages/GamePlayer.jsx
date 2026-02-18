@@ -9,6 +9,17 @@ const GamePlayer = () => {
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     useEffect(() => {
+        const handleFullScreenChange = () => {
+            setIsFullScreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+        };
+    }, []);
+
+    useEffect(() => {
         fetch('/data/games.json')
             .then(res => res.json())
             .then(data => {
