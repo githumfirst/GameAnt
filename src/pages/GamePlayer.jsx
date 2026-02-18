@@ -34,14 +34,32 @@ const GamePlayer = () => {
             .catch(err => console.error("Failed to load games:", err));
     }, [id, navigate]);
 
-    const toggleFullScreen = () => {
+    const toggleFullScreen = async () => {
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
+            try {
+                await document.documentElement.requestFullscreen();
+                // Lock to portrait on mobile (if supported)
+                if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                    await window.screen.orientation.lock("portrait").catch(err => {
+                        // Consistently ignore errors - desktop browsers or unsupported devices 
+                        // will reject this promise, which is expected behavior.
+                        console.log("Orientation lock not supported or failed:", err);
+                    });
+                }
+            } catch (err) {
                 console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
+            }
             setIsFullScreen(true);
         } else {
             if (document.exitFullscreen) {
+                // Unlock orientation when exiting
+                if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+                    try {
+                        window.screen.orientation.unlock();
+                    } catch (e) {
+                        // Ignore unlock errors
+                    }
+                }
                 document.exitFullscreen();
                 setIsFullScreen(false);
             }
