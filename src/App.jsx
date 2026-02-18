@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Smartphone, Globe, Gamepad2, ExternalLink } from 'lucide-react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Play, Smartphone, Globe, Gamepad2 } from 'lucide-react';
+import GamePlayer from './pages/GamePlayer';
 
-function App() {
+function Home() {
     const [games, setGames] = useState([]);
     const [filter, setFilter] = useState('all'); // 'all' = Mobile, 'html' = Both
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('/data/games.json')
@@ -12,8 +15,10 @@ function App() {
             .catch(err => console.error("Failed to load games:", err));
     }, []);
 
+
     const handlePlay = (game) => {
-        window.open(game.url, '_blank');
+        // Route ALL games to the internal player page for AdSense/SEO benefits
+        navigate(`/play/${game.id}`);
     };
 
     const filteredGames = games.filter(game => {
@@ -42,6 +47,13 @@ function App() {
                     </div>
                 </div>
             </header>
+
+            {/* AdSense Placeholder - Top */}
+            <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-12">
+                <div className="w-full h-24 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 border border-slate-700 border-dashed">
+                    <span>Advertisement Space</span>
+                </div>
+            </div>
 
             {/* Filter Buttons */}
             <div className="flex justify-center gap-4 mb-12">
@@ -136,6 +148,15 @@ function App() {
                 </div>
             </footer>
         </div>
+    );
+}
+
+function App() {
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/play/:id" element={<GamePlayer />} />
+        </Routes>
     );
 }
 

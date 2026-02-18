@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repro GamePlayer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#0f172a',
+                        'brand-accent': '#8b5cf6',
+                        'brand-highlight': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 font-sans">
+    <div class="min-h-screen bg-slate-900 flex flex-col text-slate-100 font-sans">
+        <!-- Header -->
+        <div class="bg-slate-900 p-4 flex justify-between items-center text-white border-b border-slate-800">
+            <button class="flex items-center gap-2 hover:text-brand-accent transition-colors">
+                Back to Hub
+            </button>
+            <h1 class="text-lg font-bold hidden sm:block text-brand-accent">Soldiers's War</h1>
+            <button class="flex items-center gap-2 hover:text-brand-accent transition-colors">
+                Full Screen
+            </button>
+        </div>
+
+        <!-- Game Container -->
+        <div class="relative w-full bg-black aspect-video max-h-[80vh] mx-auto max-w-7xl">
+            <iframe src="about:blank" class="w-full h-full border-0" style="background: white;"></iframe>
+        </div>
+
+        <!-- Rich Content Section -->
+        <div class="max-w-4xl mx-auto w-full px-6 py-12 space-y-12">
+            <!-- AdSense Placeholder -->
+            <div
+                class="w-full h-24 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 border border-slate-700 border-dashed">
+                <span>Advertisement Space</span>
+            </div>
+
+            <!-- Main Description -->
+            <section class="max-w-none">
+                <h2 class="text-3xl font-bold text-white mb-6 border-b border-slate-800 pb-4">About Soldiers's War</h2>
+                <div class="flex flex-col md:flex-row gap-8 mb-8">
+                    <div class="flex-1">
+                        <p class="text-slate-300 text-lg leading-relaxed">Soldiers places you in a world where
+                            artificial intelligence has taken over.</p>
+                    </div>
+
+                    <!-- Meta Data Box -->
+                    <div class="w-full md:w-64 bg-slate-800 p-6 rounded-xl border border-slate-700 h-fit">
+                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Game Info</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center gap-3">
+                                <span class="text-slate-300">NolGaeMi</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

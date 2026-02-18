@@ -1,34 +1,78 @@
 [
     {
-        "id": "game-1",
-        "title": "Soldiers Battle",
+        "id": "ai-uprising",
+        "title": "Soldiers's War",
         "thumbnail": "/thumbnails/game1.jpg",
+        "url": "https://aiuprising.pages.dev/",
         "type": "html",
-        "url": "https://aiuprising.pages.dev",
-        "description": "Crazy Strategy, brain and guessing Game!"
+        "description": "Survive the AI uprising in this intense strategy survival game.",
+        "long_description": "Soldiers places you in a world where artificial intelligence has taken over. You must use your wits and resources to survive against an ever-evolving enemy. Build defenses, manage resources, and outsmart the AI to reclaim humanity's future.",
+        "instructions": "Use your mouse or touch controls to interact with the game world. Follow on-screen prompts to build and defend.",
+        "controls": "Mouse: Interact. Touch: Tap to interact.",
+        "features": [
+            "Intense survival gameplay",
+            "Strategy and resource management",
+            "Futuristic setting",
+            "Challenging AI opponents"
+        ],
+        "author": "NolGaeMi",
+        "last_updated": "2026-02-17"
     },
     {
-        "id": "game-2",
-        "title": "Block Buster",
+        "id": "block-game",
+        "title": "Block Game",
         "thumbnail": "/thumbnails/game2.jpg",
-        "type": "html",
         "url": "https://blockgame-e2h.pages.dev/",
-        "description": "Get ready for an explosive arcade experience!"
+        "type": "html",
+        "description": "A classic puzzle game where you match blocks to clear the board.",
+        "long_description": "Block Game is a timeless puzzle experience. Arrange falling blocks to create complete lines and clear the board. As you progress, the speed increases, testing your reflexes and spatial awareness. Aim for the high score!",
+        "instructions": "Rotate and move falling blocks to fit them into the grid. Complete horizontal lines to clear them.",
+        "controls": "Arrow Keys: Move/Rotate. Touch: Swipe/Tap.",
+        "features": [
+            "Classic puzzle mechanics",
+            "Endless gameplay",
+            "High score tracking",
+            "Simple yet addictive"
+        ],
+        "author": "NolGaeMi",
+        "last_updated": "2026-02-15"
     },
     {
-        "id": "game-3",
-        "title": "Chicken Fight",
+        "id": "zoning-flappy-bird",
+        "title": "Chicken Fly",
         "thumbnail": "/thumbnails/game3.jpg",
-        "type": "Android",
         "url": "https://play.google.com/store/apps/details?id=com.nolGaeMi.zoningFlappyBird",
-        "description": "Chicken drems to fly and win fight!!!"
+        "type": "android",
+        "description": "Navigate through obstacles in this challenging flappy adventure.",
+        "long_description": "Flying chicken takes the classic flappy mechanics and adds a unique twist. Navigate your bird through complex zoning regulations and obstacles. Tap to fly and avoid crashing. How far can you go?",
+        "instructions": "Tap the up-arrow key to make the bird fly upwards. Destroy obstacles by shooting chicken missles.",
+        "controls": "Touch: Tap to fly and shoot chicken missles.",
+        "features": [
+            "Addictive one-touch gameplay",
+            "Challenging obstacles",
+            "Retro graphics",
+            "Global leaderboards"
+        ],
+        "author": "NolGaeMi",
+        "last_updated": "2024-02-15"
     },
     {
-        "id": "game-4",
-        "title": "Monster Fly",
+        "id": "monster",
+        "title": "Monster Fight",
         "thumbnail": "/thumbnails/game4.jpg",
-        "type": "Android",
         "url": "https://play.google.com/store/apps/details?id=com.nolgaemi.monster",
-        "description": "Unleash a barrage of bizarre, monstrous projectiles!"
+        "type": "android",
+        "description": "Unleash your moster hunter in this action-packed monster game.",
+        "long_description": "Monster hunter lets you take control of powerful creatures. Battle against enemies, destroy cities, and evolve your monster hunter to become the ultimate apex predator. Features stunning graphics and intense combat.",
+        "instructions": "Use on-screen controls to move and attack. destroy targets to earn points and evolve.",
+        "controls": "Touch screen: Move. Auto shooting",
+        "features": [
+            "Action-packed combat",
+            "Monster evolution system",
+            "Destructible environments",
+            "Various monster types"
+        ],
+        "author": "Jackie ImperialPaPa Kim",
+        "last_updated": "2024-02-15"
     }
 ]
