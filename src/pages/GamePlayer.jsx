@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Maximize2, Minimize2, Smartphone, Download, Calendar, User, Info } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, Smartphone, Download, Calendar, User, Info, Play } from 'lucide-react';
 
 const GamePlayer = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [game, setGame] = useState(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isStarted, setIsStarted] = useState(false);
+    const iframeRef = React.useRef(null);
 
     useEffect(() => {
         const handleFullScreenChange = () => {
@@ -33,6 +35,16 @@ const GamePlayer = () => {
             })
             .catch(err => console.error("Failed to load games:", err));
     }, [id, navigate]);
+
+    const handleStartGame = () => {
+        setIsStarted(true);
+        // Focus the iframe after a short delay to ensure it's rendered and ready
+        setTimeout(() => {
+            if (iframeRef.current) {
+                iframeRef.current.focus();
+            }
+        }, 100);
+    };
 
     const toggleFullScreen = async () => {
         if (!document.fullscreenElement) {
@@ -112,13 +124,43 @@ const GamePlayer = () => {
 
                 {game.type === 'html' ? (
                     // HTML5 Game Iframe
-                    <iframe
-                        src={game.url}
-                        title={game.title}
-                        className="w-full h-full border-0"
-                        allowFullScreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    ></iframe>
+                    <div className="w-full h-full relative group/game">
+                        <iframe
+                            ref={iframeRef}
+                            src={game.url}
+                            title={game.title}
+                            className="w-full h-full border-0"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        ></iframe>
+
+                        {/* Click to Play Overlay - Restricted to Guardian */}
+                        {!isStarted && game.id === 'guardian' && (
+                            <div
+                                onClick={handleStartGame}
+                                className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-900/90 backdrop-blur-sm cursor-pointer group-hover/game:bg-slate-900/80 transition-all duration-300"
+                            >
+                                <div className="bg-brand-accent p-6 rounded-full mb-4 shadow-2xl shadow-brand-accent/50 transform group-hover/game:scale-110 transition-transform duration-300">
+                                    <Play fill="currentColor" size={48} className="text-white ml-1" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-white mb-2">Ready to Sortie?</h2>
+                                <p className="text-slate-400">Click to focus and start the game</p>
+
+                                {/* Control Hints */}
+                                <div className="mt-8 flex gap-4">
+                                    <div className="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-mono text-slate-300 flex items-center gap-2">
+                                        <kbd className="bg-slate-700 px-1 rounded">Shift</kbd> Boost
+                                    </div>
+                                    <div className="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-mono text-slate-300 flex items-center gap-2">
+                                        <kbd className="bg-slate-700 px-1 rounded">Space</kbd> Fire
+                                    </div>
+                                    <div className="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-mono text-slate-300 flex items-center gap-2">
+                                        <kbd className="bg-slate-700 px-1 rounded">Arrows</kbd> Fly
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     // Android Game "Download" Call-to-Action
                     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-center p-8 relative overflow-hidden">
