@@ -103,7 +103,12 @@ function Home() {
                                 </div>
 
                                 {/* Type Badge */}
-                                <div className="absolute top-2 right-2">
+                                <div className="absolute top-2 right-2 flex flex-col gap-2 items-end">
+                                    {game.isNew && (
+                                        <span className="inline-flex items-center rounded-full bg-brand-highlight px-2.5 py-1 text-xs font-bold text-white shadow-lg shadow-brand-highlight/40 ring-1 ring-white/20 animate-pulse">
+                                            NEW
+                                        </span>
+                                    )}
                                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 ring-inset backdrop-blur-md ${game.type === 'android'
                                         ? 'bg-green-500/10 text-green-400 ring-green-500/20'
                                         : 'bg-blue-500/10 text-blue-400 ring-blue-500/20'

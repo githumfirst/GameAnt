@@ -74,5 +74,25 @@
         ],
         "author": "Jackie ImperialPaPa Kim",
         "last_updated": "2024-02-15"
+    },
+    {
+        "id": "guardian",
+        "title": "Guardians of the Sky",
+        "thumbnail": "/thumbnails/game5.jpeg",
+        "url": "https://guardiansofthesky.pages.dev/",
+        "type": "html",
+        "isNew": true,
+        "description": "An intense jet simulation where you, once an ordinary person, become the chosen pilot and humanity's last hope to defend Earth's skies against an alien fleet.",
+        "long_description": "One peaceful day, unidentified alien aircraft attacked major cities around the globe, igniting a massive war. Humanity's elite flight squadron, the 'Guardians of the Sky', was pushed to the brink of extinction by the aliens' overwhelming technology. At the moment of global despair, the secret prototype 'Zero' awakened, responding only to your biological signature. You, who lived an ordinary life until yesterday, must now sortie as the only pilot capable of saving Earth.",
+        "instructions": "Master the controls of the 'Zero' prototype and engage in intense aerial dogfights. Follow the radar to locate alien targets and clear the skies.",
+        "controls": "Speed Up: Left Shift | Brake: Left Control | Turn: Arrow Keys | Pitch: Up/Down Arrows | Fire: Spacebar",
+        "features": [
+            "Immersive 3D Jet Simulation Combat",
+            "Thwart the Alien Invasion with Your Jet",
+            "Dynamic Dogfighting mechanics",
+            "Fully realized 3D environment"
+        ],
+        "author": "NolGaeMi",
+        "last_updated": "2026-02-24"
     }
 ]
