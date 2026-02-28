@@ -107,7 +107,7 @@ const GamePlayer = () => {
                         <Info size={20} />
                         <span className="hidden sm:inline">Game Info</span>
                     </button>
-                    {game.type === 'html' && (
+                    {(game.type === 'html' || game.type === 'Unique') && (
                         <button
                             onClick={toggleFullScreen}
                             className="flex items-center gap-2 hover:text-brand-accent transition-colors"
@@ -122,7 +122,7 @@ const GamePlayer = () => {
             {/* Game Container (The "Hero" Content) */}
             <div className={`relative w-full bg-black ${isFullScreen ? 'h-screen' : 'aspect-video max-h-[80vh] mx-auto max-w-7xl'}`}>
 
-                {game.type === 'html' ? (
+                {game.type === 'html' || game.type === 'Unique' ? (
                     // HTML5 Game Iframe
                     <div className="w-full h-full relative group/game">
                         <iframe
@@ -186,8 +186,8 @@ const GamePlayer = () => {
                     </div>
                 )}
 
-                {/* Mobile Floating Full Screen Button (HTML only) */}
-                {!isFullScreen && game.type === 'html' && (
+                {/* Mobile Floating Full Screen Button (HTML/Unique only) */}
+                {!isFullScreen && (game.type === 'html' || game.type === 'Unique') && (
                     <button
                         onClick={toggleFullScreen}
                         className="absolute bottom-4 right-4 bg-black/60 text-white p-2 rounded-full sm:hidden z-50 backdrop-blur-md border border-white/20"
@@ -228,7 +228,7 @@ const GamePlayer = () => {
                                     </li>
                                     <li className="flex items-center gap-3">
                                         <Smartphone size={16} className="text-brand-accent" />
-                                        <span className="text-slate-300">{game.type === 'html' ? 'Browser (HTML5)' : 'Android App'}</span>
+                                        <span className="text-slate-300">{(game.type === 'html' || game.type === 'Unique') ? 'Browser (HTML5)' : 'Android App'}</span>
                                     </li>
                                 </ul>
                             </div>

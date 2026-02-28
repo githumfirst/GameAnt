@@ -5,7 +5,7 @@ import GamePlayer from './pages/GamePlayer';
 
 function Home() {
     const [games, setGames] = useState([]);
-    const [filter, setFilter] = useState('all'); // 'all' = Mobile, 'html' = Both
+    const [filter, setFilter] = useState('all'); // 'all', 'android', 'unique'
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,8 +22,9 @@ function Home() {
     };
 
     const filteredGames = games.filter(game => {
-        if (filter === 'all') return true; // Show all games (Mobile button logic)
-        if (filter === 'html') return game.type === 'html'; // Show only HTML games (Both button logic)
+        if (filter === 'all') return true;
+        if (filter === 'android') return game.type === 'android';
+        if (filter === 'unique') return game.type === 'Unique';
         return true;
     });
 
@@ -55,17 +56,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* Filter Buttons */}
             <div className="flex justify-center gap-4 mb-12">
-                <button
-                    onClick={() => setFilter('html')}
-                    className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'html'
-                        ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
-                        }`}
-                >
-                    Both
-                </button>
                 <button
                     onClick={() => setFilter('all')}
                     className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'all'
@@ -73,7 +64,25 @@ function Home() {
                         : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
                         }`}
                 >
+                    All
+                </button>
+                <button
+                    onClick={() => setFilter('android')}
+                    className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'android'
+                        ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
+                        }`}
+                >
                     Mobile
+                </button>
+                <button
+                    onClick={() => setFilter('unique')}
+                    className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 ${filter === 'unique'
+                        ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/50 ring-2 ring-brand-highlight'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
+                        }`}
+                >
+                    Unique(잼난것)
                 </button>
             </div>
 
@@ -111,10 +120,12 @@ function Home() {
                                     )}
                                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 ring-inset backdrop-blur-md ${game.type === 'android'
                                         ? 'bg-green-500/10 text-green-400 ring-green-500/20'
-                                        : 'bg-blue-500/10 text-blue-400 ring-blue-500/20'
+                                        : game.type === 'Unique'
+                                            ? 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
+                                            : 'bg-blue-500/10 text-blue-400 ring-blue-500/20'
                                         }`}>
                                         {game.type === 'android' ? <Smartphone size={10} /> : <Globe size={10} />}
-                                        {game.type === 'html' ? 'Desktop/Mobile' : 'Android'}
+                                        {game.type === 'android' ? 'Android' : game.type === 'Unique' ? 'Unique' : 'Desktop/Mobile'}
                                     </span>
                                 </div>
                             </div>
@@ -135,7 +146,7 @@ function Home() {
 
                                 <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-500 font-mono">
                                     <Gamepad2 size={12} />
-                                    <span>{game.type === 'html' ? 'Instant Play' : 'Store Download'}</span>
+                                    <span>{game.type === 'android' ? 'Store Download' : 'Instant Play'}</span>
                                 </div>
                             </div>
                         </div>
