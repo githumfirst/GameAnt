@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Play, Smartphone, Globe, Gamepad2 } from 'lucide-react';
 import GamePlayer from './pages/GamePlayer';
+import DevLogList from './pages/DevLogList';
+import DevLogDetail from './pages/DevLogDetail';
 
 function Home() {
     const [games, setGames] = useState([]);
@@ -84,6 +86,12 @@ function Home() {
                 >
                     Unique(잼난것)
                 </button>
+                <button
+                    onClick={() => navigate('/devlog')}
+                    className="px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 flex items-center gap-2"
+                >
+                    DevLog
+                </button>
             </div>
 
             {/* Game Grid */}
@@ -157,9 +165,11 @@ function Home() {
             <footer className="mt-20 border-t border-slate-800 py-10">
                 <div className="text-center text-slate-500 text-sm flex flex-col items-center gap-4">
                     <p>&copy; {new Date().getFullYear()} GameAnt's PlayGround. All rights reserved.</p>
-                    <div className="flex gap-4">
+                    <div className="flex justify-center gap-4 flex-wrap">
                         <a href="/about.html" target="_blank" className="hover:text-brand-accent transition-colors">About Us</a>
                         <a href="/privacy.html" target="_blank" className="hover:text-brand-accent transition-colors">Privacy Policy</a>
+                        <a href="/terms.html" target="_blank" className="hover:text-brand-accent transition-colors">Terms of Service</a>
+                        <span className="text-slate-500">Contact Us: WeListenToCustomer@gmail.com</span>
                     </div>
                 </div>
             </footer>
@@ -172,6 +182,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/play/:id" element={<GamePlayer />} />
+            <Route path="/devlog" element={<DevLogList />} />
+            <Route path="/devlog/:slug" element={<DevLogDetail />} />
         </Routes>
     );
 }
