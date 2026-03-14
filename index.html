@@ -5,6 +5,54 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- In-App Browser Escape Script -->
+    <script>
+        (function () {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.match(/kakaotalk/i)) {
+                var url = location.href;
+                // Android
+                if (userAgent.match(/android/i)) {
+                    location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                }
+                // iOS
+                else if (userAgent.match(/iphone|ipad|ipod/i)) {
+                    // KakaoTalk cache server bypass trick for iOS isn't reliable anymore.
+                    // The standard approach is to show an overlay guiding the user to Safari.
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var overlay = document.createElement('div');
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100vw';
+                        overlay.style.height = '100vh';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+                        overlay.style.color = 'white';
+                        overlay.style.zIndex = '999999';
+                        overlay.style.display = 'flex';
+                        overlay.style.flexDirection = 'column';
+                        overlay.style.alignItems = 'center';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.textAlign = 'center';
+                        overlay.style.padding = '20px';
+                        overlay.innerHTML = `
+                            <div style="font-size: 24px; margin-bottom: 20px;">⚠️ 브라우저 호환성 안내</div>
+                            <div style="font-size: 16px; line-height: 1.5; margin-bottom: 30px;">
+                                원활한 게임 플레이와 소리 재생을 위해<br />
+                                기본 브라우저(Safari 또는 Chrome)를 사용해주세요.
+                            </div>
+                            <div style="background: #333; padding: 15px; border-radius: 10px; font-size: 14px;">
+                                화면 우측 하단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span> 또는 <br/>
+                                상단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span>을 누른 뒤<br/>
+                                <strong>'다른 브라우저로 열기'</strong>를 선택해주세요.
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+                    });
+                }
+            }
+        })();
+    </script>
     <meta name="google-adsense-account" content="ca-pub-3130573171479694">
     <meta name="description"
         content="Play the best free online games at GameAnt's PlayGround. Instant HTML5 games for desktop and mobile, plus top-rated Android apps. Infinite fun in one place!" />
