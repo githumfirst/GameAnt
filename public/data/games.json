@@ -135,5 +135,26 @@
         ],
         "author": "임페리얼 파파",
         "last_updated": "2026-03-08"
+    },
+    {
+        "id": "forest-friends",
+        "title": "숲속 친구들 (Forest Friends)",
+        "thumbnail": "/thumbnails/game8.jpg",
+        "url": "https://hyuna.pages.dev/",
+        "type": "html",
+        "isNew": true,
+        "description": "모두를 위한 따뜻한 감성의 인터랙티브 웹 동화. (A warm, interactive storybook for everyone.)",
+        "long_description": "'숲속 친구들(Forest Friends)'은 모두를 위해 만들어진 따뜻한 감성의 인터랙티브 웹 동화입니다. 최신 React 기술과 부드러운 애니메이션을 결합하여, 생동감 넘치는 요정 숲의 이야기를 웹 위에서 그대로 펼쳐냅니다. 별도의 설치 없이 PC, 스마트폰, 태블릿 등 어떤 기기에서도 브라우저만 열면 바로 즐길 수 있습니다. 특히 한국어/영어 이중 언어 지원과 원어민 발음의 음성 읽어주기(TTS) 기능을 갖추어, 동화 감상은 물론 자연스러운 언어 학습 효과까지 기대할 수 있는 프리미엄 에듀테인먼트 플랫폼입니다.\n\nLife moves fast. The world can feel loud, overwhelming, and exhausting. Forest Friends was created as a quiet place to pause — a warm, interactive storybook where the ancient magic of a fairy-tale forest gently reminds us that we are not alone. Built with modern React technology and fluid animations, the enchanted forest comes alive right in your browser. No downloads, no installations — just open any device, and the story begins. Whether you're seeking a moment of calm for yourself, or sharing a gentle bedtime ritual with someone you love, Forest Friends meets you exactly where you are. With full bilingual support (Korean & English) and natural text-to-speech narration, the forest speaks your language — softly, warmly, and without rush.",
+        "instructions": "1. 앱 접속하기: 인터넷이 연결된 기기에서 앱 주소로 접속합니다. 처음 화면에는 귀여운 동물 친구들과 함께 메인 커버 페이지가 펼쳐집니다.\n2. 언어 선택하기: 화면 우측 상단의 🌐 버튼(한국어/English)을 눌러 원하는 언어를 선택하세요. 언제든지 자유롭게 전환할 수 있습니다.\n3. 동화책 읽기: 화면 중앙의 동화 내용을 읽으며, 그림 하단의 [이전] (◀) / [다음] (▶) 버튼으로 페이지를 넘길 수 있습니다. 첫 페이지와 마지막 페이지에서는 해당 방향의 버튼이 자동으로 비활성화됩니다.\n4. 음성으로 듣기: 텍스트 아래의 [🔊 소리내어 읽기] 버튼을 누르면 동화를 따뜻한 목소리로 읽어줍니다. 언제든지 [⏸️ 일시정지]하거나 [⏹️ 정지] 할 수 있습니다.\n5. 처음으로 돌아가기: 마지막 페이지의 [다시 읽기] 버튼을 누르거나 화면 좌측 상단의 [숲속 친구들] 로고를 누르면 첫 페이지로 돌아갑니다.\n\n1. Open the Story: Visit the app link on any internet-connected device. The opening page greets you with familiar animal friends waiting patiently in the forest.\n2. Choose Your Language: Tap the 🌐 button in the top-right corner to switch between Korean (한국어) and English at any time.\n3. Turn the Pages: Read at your own pace. Use the (◀) and (▶) buttons to move between pages. The first and last pages gracefully disable their respective arrows.\n4. Let the Forest Speak: Press the [🔊 Read Aloud] button and let a warm voice carry the words to you. Tap [⏸️ Pause] to rest for a moment, and [⏹️ Stop] when you're ready to simply sit in the quiet.\n5. Begin Again: Tap [Read Again] on the final page, or return to the beginning anytime by pressing the Forest Friends logo in the top-left corner.",
+        "controls": "[터치 및 마우스] 🌐: 언어 전환 (Language) | ◀ / ▶: 페이지 이동 (Turn pages) | 🔊 / ⏸️ / ⏹️: 음성 제어 (Voice controls) | 로고(Logo): 처음으로 (Restart)",
+        "features": [
+            "완벽한 이중 언어 지원 (Bilingual Support): 한국어(KO)와 영어(EN) 실시간 전환",
+            "브라우저 내장 음성 읽어주기 (Native TTS API): 기기 운영체제에 내장된 고품질 음성 합성 엔진 활용 자연스러운 읽기",
+            "감성적인 SVG 일러스트와 부드러운 애니메이션 (Handcrafted Illustrations & Animations): 실제 그림책을 넘기는 듯한 자연스러운 전환 효과",
+            "100% 반응형 웹 디자인 (Responsive Web Design): 모니터, 태블릿, 스마트폰 모바일 기기 완벽 대응",
+            "초고속 로딩 (React + Vite): 가볍고 빠른 초기 로딩 제공"
+        ],
+        "author": "임페리얼파파",
+        "last_updated": "2026-03-14"
     }
 ]

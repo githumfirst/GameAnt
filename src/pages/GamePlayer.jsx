@@ -211,7 +211,7 @@ const GamePlayer = () => {
                         <h2 className="text-3xl font-bold text-white mb-6 border-b border-slate-800 pb-4">About {game.title}</h2>
                         <div className="flex flex-col md:flex-row gap-8 mb-8">
                             <div className="flex-1">
-                                <p className="text-slate-300 text-lg leading-relaxed">{game.long_description || game.description}</p>
+                                <p className="text-slate-300 text-lg leading-relaxed whitespace-pre-wrap">{game.long_description || game.description}</p>
                             </div>
 
                             {/* Meta Data Box */}
@@ -242,13 +242,13 @@ const GamePlayer = () => {
                                 <span className="w-1 h-6 bg-brand-accent rounded-full inline-block"></span>
                                 How to Play
                             </h3>
-                            <p className="text-slate-300 leading-relaxed mb-4">
+                            <p className="text-slate-300 leading-relaxed mb-4 whitespace-pre-wrap">
                                 {game.instructions || "Follow the on-screen instructions to play."}
                             </p>
                             {game.controls && (
                                 <div className="mt-4 bg-slate-900 p-4 rounded-lg">
                                     <h4 className="text-sm font-bold text-slate-400 mb-2">Controls</h4>
-                                    <p className="text-slate-300 font-mono text-sm">{game.controls}</p>
+                                    <p className="text-slate-300 font-mono text-sm whitespace-pre-wrap">{game.controls}</p>
                                 </div>
                             )}
                         </section>
