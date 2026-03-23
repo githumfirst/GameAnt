@@ -1,5 +1,5 @@
 ---
-title: "윈도우즈 비밀번호 분실시 조치방법"
+title: "윈도우즈 비밀번호 분실시 조치방법 그리고 원리(bitlocker & tpm)"
 writer: "NolGaeMi"
 date: "2026-03-23"
 ---
