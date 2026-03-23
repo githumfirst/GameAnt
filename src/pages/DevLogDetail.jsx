@@ -97,7 +97,7 @@ function DevLogDetail() {
 
                 <article className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
                     <header className="mb-10 text-center border-b border-slate-700/50 pb-8">
-                        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                        <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-white mb-6 leading-tight">
                             {post.title}
                         </h1>
                         <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400">
