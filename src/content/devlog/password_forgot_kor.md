@@ -40,7 +40,7 @@ net user nolgaemi  1234
 
 ### 그런데 이게 무슨 원리 일까요?
 
-shifter +  reboot로 재시작한것은 utilman.exe를 실행한 것입니다. 제한적인 기능밖에 못해요.그런데, 여기서, cmd.exe를 utilman.exe로 교체하면, 이제 utilman.exe는 admin이 된거에요.**엄청난 보안 구멍**이 발생한거에요. 복구하라고 만들어놓은 파이프라인에 엄청난 보안 이슈가 생긴거죠. 이걸 알고, MS에서는 bitlocker를 내놓았어요. 
+shift +  reboot로 재시작한것은 utilman.exe를 실행한 것입니다. 제한적인 기능밖에 못해요.그런데, 여기서, cmd.exe를 utilman.exe로 교체하면, 이제 utilman.exe는 admin이 된거에요.**엄청난 보안 구멍**이 발생한거에요. 복구하라고 만들어놓은 파이프라인에 엄청난 보안 이슈가 생긴거죠. 이걸 알고, MS에서는 bitlocker를 내놓았어요. 
 
 ```
 net user nolgaemi  1234
