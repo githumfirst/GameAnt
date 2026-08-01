@@ -46,10 +46,12 @@ export async function onRequestPost(context) {
             });
         }
 
+        const todayStr = new Date().toISOString().substring(0, 10);
+
         if (!env || !env.DB) {
             return new Response(JSON.stringify({ 
                 success: true, 
-                post: { id: Date.now(), title, author, content, views: 1, created_at: new Date().toISOString() }
+                post: { id: Date.now(), title, author, content, views: 1, created_at: todayStr }
             }), {
                 headers: { "Content-Type": "application/json" }
             });
@@ -59,7 +61,20 @@ export async function onRequestPost(context) {
             "INSERT INTO posts (title, author, content, password, views) VALUES (?, ?, ?, ?, 1)"
         ).bind(title, author, content, password).run();
 
-        return new Response(JSON.stringify({ success: true, id: info.meta.last_row_id }), {
+        const newId = info.meta.last_row_id;
+
+        return new Response(JSON.stringify({ 
+            success: true, 
+            id: newId,
+            post: {
+                id: newId,
+                title,
+                author,
+                content,
+                views: 1,
+                created_at: todayStr
+            }
+        }), {
             headers: { "Content-Type": "application/json" }
         });
     } catch (err) {

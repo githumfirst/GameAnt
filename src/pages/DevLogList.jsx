@@ -99,7 +99,7 @@ function DevLogList() {
             const res = await fetch('/api/posts');
             if (res.ok) {
                 const data = await res.json();
-                if (data.success && data.posts) {
+                if (data.success && data.posts && data.posts.length > 0) {
                     const formatted = data.posts.map(p => ({
                         id: `community-${p.id}`,
                         rawId: p.id,
@@ -120,16 +120,21 @@ function DevLogList() {
             console.log("Using local community posts fallback");
         }
 
+        // Fallback to local storage
         const local = localStorage.getItem('community_posts');
         if (local) {
             try {
                 const parsed = JSON.parse(local);
-                const updated = parsed.map(p => ({
-                    ...p,
-                    id: p.id.startsWith('community-') ? p.id : `community-${p.id}`,
-                    views: getViewCount(p.id, p.views || 1),
-                    comment_count: getCommentCount(p.id)
-                }));
+                const updated = parsed.map(p => {
+                    const cleanId = String(p.id).replace(/^community-/, '');
+                    return {
+                        ...p,
+                        id: `community-${cleanId}`,
+                        rawId: cleanId,
+                        views: getViewCount(`community-${cleanId}`, p.views || 1),
+                        comment_count: getCommentCount(`community-${cleanId}`)
+                    };
+                });
                 setCommunityPosts(updated);
             } catch (e) {
                 setCommunityPosts([]);
@@ -142,9 +147,10 @@ function DevLogList() {
     }, []);
 
     const handlePostCreated = (newPost) => {
+        const cleanId = String(newPost.id || Date.now()).replace(/^community-/, '');
         const formatted = {
-            id: `community-${newPost.id}`,
-            rawId: newPost.id,
+            id: `community-${cleanId}`,
+            rawId: cleanId,
             isSSG: false,
             title: newPost.title,
             writer: newPost.author,
@@ -154,9 +160,14 @@ function DevLogList() {
             date: newPost.created_at ? newPost.created_at.substring(0, 10) : 'Recent',
             content: newPost.content
         };
-        const updated = [formatted, ...communityPosts];
+        const updated = [formatted, ...communityPosts.filter(p => p.id !== formatted.id)];
         setCommunityPosts(updated);
         localStorage.setItem('community_posts', JSON.stringify(updated));
+
+        // Re-sync with D1 DB API
+        setTimeout(() => {
+            loadCommunityPosts();
+        }, 500);
     };
 
     const handleOpenPost = (post) => {
@@ -164,10 +175,8 @@ function DevLogList() {
         const updatedPost = { ...post, views: newViews };
 
         if (post.isSSG) {
-            // Static preserved articles
             setSelectedPost(updatedPost);
         } else {
-            // Community posts
             setCommunityPosts(prev => prev.map(p => p.id === post.id ? updatedPost : p));
             setSelectedPost(updatedPost);
 
@@ -186,7 +195,7 @@ function DevLogList() {
         }
 
         const target = communityPosts.find(p => p.id === deleteModal.postId);
-        const rawId = target ? (target.rawId || deleteModal.postId) : deleteModal.postId;
+        const rawId = target ? (target.rawId || String(deleteModal.postId).replace(/^community-/, '')) : deleteModal.postId;
 
         try {
             const res = await fetch(`/api/posts/${rawId}`, {
