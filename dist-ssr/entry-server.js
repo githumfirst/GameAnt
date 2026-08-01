@@ -1204,14 +1204,240 @@ function DevLogDetail() {
     ] })
   ] }) });
 }
-const initialGames = /* @__PURE__ */ JSON.parse(`[{"id":"ai-uprising","title":"Soldiers's War","thumbnail":"/thumbnails/game1.jpg","url":"https://aiuprising.pages.dev/","type":"html","description":"Survive the AI uprising in this intense strategy survival game.","long_description":"Soldiers places you in a world where artificial intelligence has taken over. You must use your wits and resources to survive against an ever-evolving enemy. Build defenses, manage resources, and outsmart the AI to reclaim humanity's future.","instructions":"Use your mouse or touch controls to interact with the game world. Follow on-screen prompts to build and defend.","controls":"Mouse: Interact. Touch: Tap to interact.","features":["Intense survival gameplay","Strategy and resource management","Futuristic setting","Challenging AI opponents"],"author":"NolGaeMi","last_updated":"2026-02-17"},{"id":"block-game","title":"Block Game","thumbnail":"/thumbnails/game2.jpg","url":"https://blockgame-e2h.pages.dev/","type":"html","description":"A classic puzzle game where you match blocks to clear the board.","long_description":"Block Game is a timeless puzzle experience. Arrange falling blocks to create complete lines and clear the board. As you progress, the speed increases, testing your reflexes and spatial awareness. Aim for the high score!","instructions":"Rotate and move falling blocks to fit them into the grid. Complete horizontal lines to clear them.","controls":"Arrow Keys: Move/Rotate. Touch: Swipe/Tap.","features":["Classic puzzle mechanics","Endless gameplay","High score tracking","Simple yet addictive"],"author":"NolGaeMi","last_updated":"2026-02-15"},{"id":"zoning-flappy-bird","title":"Chicken Fly","thumbnail":"/thumbnails/game3.jpg","url":"https://play.google.com/store/apps/details?id=com.nolGaeMi.zoningFlappyBird","type":"android","description":"Navigate through obstacles in this challenging flappy adventure.","long_description":"Flying chicken takes the classic flappy mechanics and adds a unique twist. Navigate your bird through complex zoning regulations and obstacles. Tap to fly and avoid crashing. How far can you go?","instructions":"Tap the up-arrow key to make the bird fly upwards. Destroy obstacles by shooting chicken missles.","controls":"Touch: Tap to fly and shoot chicken missles.","features":["Addictive one-touch gameplay","Challenging obstacles","Retro graphics","Global leaderboards"],"author":"NolGaeMi","last_updated":"2024-02-15"},{"id":"monster","title":"Monster Fight","thumbnail":"/thumbnails/game4.jpg","url":"https://play.google.com/store/apps/details?id=com.nolgaemi.monster","type":"android","description":"Unleash your moster hunter in this action-packed monster game.","long_description":"Monster hunter lets you take control of powerful creatures. Battle against enemies, destroy cities, and evolve your monster hunter to become the ultimate apex predator. Features stunning graphics and intense combat.","instructions":"Use on-screen controls to move and attack. destroy targets to earn points and evolve.","controls":"Touch screen: Move. Auto shooting","features":["Action-packed combat","Monster evolution system","Destructible environments","Various monster types"],"author":"Jackie ImperialPaPa Kim","last_updated":"2024-02-15"},{"id":"guardian","title":"Guardians of the Sky","thumbnail":"/thumbnails/game5.jpeg","url":"https://guardiansofthesky.pages.dev/","type":"html","isNew":true,"description":"An intense jet simulation where you, once an ordinary person, become the chosen pilot and humanity's last hope to defend Earth's skies against an alien fleet.","long_description":"One peaceful day, unidentified alien aircraft attacked major cities around the globe, igniting a massive war. Humanity's elite flight squadron, the 'Guardians of the Sky', was pushed to the brink of extinction by the aliens' overwhelming technology. At the moment of global despair, the secret prototype 'Zero' awakened, responding only to your biological signature. You, who lived an ordinary life until yesterday, must now sortie as the only pilot capable of saving Earth.","instructions":"Master the controls of the 'Zero' prototype and engage in intense aerial dogfights. Follow the radar to locate alien targets and clear the skies.","controls":"Speed Up: Left Shift | Brake: Left Control | Turn: Arrow Keys | Pitch: Up/Down Arrows | Fire: Spacebar","features":["Immersive 3D Jet Simulation Combat","Thwart the Alien Invasion with Your Jet","Dynamic Dogfighting mechanics","Fully realized 3D environment"],"author":"NolGaeMi","last_updated":"2026-02-24"},{"id":"imperialpapalotto","title":"임페리얼 파파 로또 대박","thumbnail":"/thumbnails/game6.jpg","url":"https://lotto.funbtstube.workers.dev/","type":"Unique","isNew":true,"description":"당신의 운명을 바꿀 단 한 번의 클릭! 임페리얼 파파가 전하는 특별한 행운의 번호로 1등 당첨의 꿈에 도전하세요.","long_description":"평범한 일상 속에서 찾아오는 짜릿한 역전의 기회! '임페리얼 파파 로또 대박'은 정교한 알고리즘을 통해 최적의 로또 번호를 생성해 드립니다. 분석과 운이 만나는 지점에서 당신만의 당첨 번호를 확인하고, 대박의 주인공이 되는 설렘을 만끽해 보세요. 오늘 당신의 손끝에서 새로운 인생이 시작될 수 있습니다.","instructions":"화면 중앙의 '번호 생성' 버튼을 클릭하여 행운의 6개 번호를 확인하세요. 생성된 번호를 저장하거나 실제 로또 구매에 참고할 수 있습니다.","controls":"번호 생성: 마우스 왼쪽 클릭 또는 터치 | 결과 확인: 화면 스크롤","features":["빠르고 간편한 자동 번호 생성 시스템","행운을 부르는 세련된 인터페이스","실시간 번호 조합 최적화 알고리즘","모바일 및 PC 완벽 호환"],"author":"임페리얼 파파","last_updated":"2026-02-28"},{"id":"tetris-3d","title":"3D 테트리스","thumbnail":"/thumbnails/game7.jpg","url":"https://tetris3d.pages.dev/","type":"html","isNew":true,"description":"몰입감 넘치는 3D 공간에서 즐기는 테트리스 게임입니다. X, Y, Z축 회전을 통해 블록을 배치하고 레이어를 클리어하세요.","long_description":"TETRIS 3D CUBE EDITION은 클래식한 테트리스를 3차원으로 확장한 혁신적인 퍼즐 게임입니다. 5x5 그리드 기반의 3D 공간에서 다양한 각도로 뷰를 회전하며 공간 지각 능력을 발휘해 보세요. 모바일과 데스크탑 모두에서 완벽하게 즐길 수 있습니다.","instructions":"화면 하단의 화살표 버튼이나 방향키로 블록을 이동하고, X/Y/Z 버튼으로 각 축을 따라 회전시키세요. 카메라 회전 버튼(◁, ▷)을 사용해 뷰를 조절할 수 있습니다. 드롭 버튼이나 스페이스 바로 블록을 빠르게 내릴 수 있습니다.","controls":"이동: 방향키 또는 화면 화살표 | 회전: q, w, e 키 또는 모바일 버튼 | 하드 드롭: Space 또는 드롭 버튼 | 카메라 회전: ◁, ▷ 버튼 | 홀드: 홀드 버튼","features":["레이어 클리어 방식의 3D 테트리스","자유로운 3D 시점 전환","모바일 터치 최적화 UI","Next/Hold 프리뷰 시스템","실시간 리더보드 지원"],"author":"임페리얼 파파","last_updated":"2026-03-08"},{"id":"forest-friends","title":"숲속 친구들 (Forest Friends)","thumbnail":"/thumbnails/game8.jpg","url":"https://hyuna.pages.dev/","type":"html","isNew":true,"description":"모두를 위한 따뜻한 감성의 인터랙티브 웹 동화. (A warm, interactive storybook for everyone.)","long_description":"'숲속 친구들(Forest Friends)'은 모두를 위해 만들어진 따뜻한 감성의 인터랙티브 웹 동화입니다. 최신 React 기술과 부드러운 애니메이션을 결합하여, 생동감 넘치는 요정 숲의 이야기를 웹 위에서 그대로 펼쳐냅니다. 별도의 설치 없이 PC, 스마트폰, 태블릿 등 어떤 기기에서도 브라우저만 열면 바로 즐길 수 있습니다. 특히 한국어/영어 이중 언어 지원과 원어민 발음의 음성 읽어주기(TTS) 기능을 갖추어, 동화 감상은 물론 자연스러운 언어 학습 효과까지 기대할 수 있는 프리미엄 에듀테인먼트 플랫폼입니다.\\n\\nLife moves fast. The world can feel loud, overwhelming, and exhausting. Forest Friends was created as a quiet place to pause — a warm, interactive storybook where the ancient magic of a fairy-tale forest gently reminds us that we are not alone. Built with modern React technology and fluid animations, the enchanted forest comes alive right in your browser. No downloads, no installations — just open any device, and the story begins. Whether you're seeking a moment of calm for yourself, or sharing a gentle bedtime ritual with someone you love, Forest Friends meets you exactly where you are. With full bilingual support (Korean & English) and natural text-to-speech narration, the forest speaks your language — softly, warmly, and without rush.","instructions":"1. 앱 접속하기: 인터넷이 연결된 기기에서 앱 주소로 접속합니다. 처음 화면에는 귀여운 동물 친구들과 함께 메인 커버 페이지가 펼쳐집니다.\\n2. 언어 선택하기: 화면 우측 상단의 🌐 버튼(한국어/English)을 눌러 원하는 언어를 선택하세요. 언제든지 자유롭게 전환할 수 있습니다.\\n3. 동화책 읽기: 화면 중앙의 동화 내용을 읽으며, 그림 하단의 [이전] (◀) / [다음] (▶) 버튼으로 페이지를 넘길 수 있습니다. 첫 페이지와 마지막 페이지에서는 해당 방향의 버튼이 자동으로 비활성화됩니다.\\n4. 음성으로 듣기: 텍스트 아래의 [🔊 소리내어 읽기] 버튼을 누르면 동화를 따뜻한 목소리로 읽어줍니다. 언제든지 [⏸️ 일시정지]하거나 [⏹️ 정지] 할 수 있습니다.\\n5. 처음으로 돌아가기: 마지막 페이지의 [다시 읽기] 버튼을 누르거나 화면 좌측 상단의 [숲속 친구들] 로고를 누르면 첫 페이지로 돌아갑니다.\\n\\n1. Open the Story: Visit the app link on any internet-connected device. The opening page greets you with familiar animal friends waiting patiently in the forest.\\n2. Choose Your Language: Tap the 🌐 button in the top-right corner to switch between Korean (한국어) and English at any time.\\n3. Turn the Pages: Read at your own pace. Use the (◀) and (▶) buttons to move between pages. The first and last pages gracefully disable their respective arrows.\\n4. Let the Forest Speak: Press the [🔊 Read Aloud] button and let a warm voice carry the words to you. Tap [⏸️ Pause] to rest for a moment, and [⏹️ Stop] when you're ready to simply sit in the quiet.\\n5. Begin Again: Tap [Read Again] on the final page, or return to the beginning anytime by pressing the Forest Friends logo in the top-left corner.","controls":"[터치 및 마우스] 🌐: 언어 전환 (Language) | ◀ / ▶: 페이지 이동 (Turn pages) | 🔊 / ⏸️ / ⏹️: 음성 제어 (Voice controls) | 로고(Logo): 처음으로 (Restart)","features":["완벽한 이중 언어 지원 (Bilingual Support): 한국어(KO)와 영어(EN) 실시간 전환","브라우저 내장 음성 읽어주기 (Native TTS API): 기기 운영체제에 내장된 고품질 음성 합성 엔진 활용 자연스러운 읽기","감성적인 SVG 일러스트와 부드러운 애니메이션 (Handcrafted Illustrations & Animations): 실제 그림책을 넘기는 듯한 자연스러운 전환 효과","100% 반응형 웹 디자인 (Responsive Web Design): 모니터, 태블릿, 스마트폰 모바일 기기 완벽 대응","초고속 로딩 (React + Vite): 가볍고 빠른 초기 로딩 제공"],"author":"임페리얼파파","last_updated":"2026-03-14"}]`);
+const initialGames = [
+  {
+    id: "ai-uprising",
+    title: "Soldiers's War",
+    thumbnail: "/thumbnails/game1.jpg",
+    url: "https://aiuprising.pages.dev/",
+    type: "html",
+    description: "Survive the AI uprising in this intense strategy survival game.",
+    long_description: "Soldiers places you in a world where artificial intelligence has taken over. You must use your wits and resources to survive against an ever-evolving enemy. Build defenses, manage resources, and outsmart the AI to reclaim humanity's future.",
+    instructions: "Use your mouse or touch controls to interact with the game world. Follow on-screen prompts to build and defend.",
+    controls: "Mouse: Interact. Touch: Tap to interact.",
+    features: [
+      "Intense survival gameplay",
+      "Strategy and resource management",
+      "Futuristic setting",
+      "Challenging AI opponents"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-02-17"
+  },
+  {
+    id: "block-game",
+    title: "Block Game",
+    thumbnail: "/thumbnails/game2.jpg",
+    url: "https://blockgame-e2h.pages.dev/",
+    type: "html",
+    description: "A classic puzzle game where you match blocks to clear the board.",
+    long_description: "Block Game is a timeless puzzle experience. Arrange falling blocks to create complete lines and clear the board. As you progress, the speed increases, testing your reflexes and spatial awareness. Aim for the high score!",
+    instructions: "Rotate and move falling blocks to fit them into the grid. Complete horizontal lines to clear them.",
+    controls: "Arrow Keys: Move/Rotate. Touch: Swipe/Tap.",
+    features: [
+      "Classic puzzle mechanics",
+      "Endless gameplay",
+      "High score tracking",
+      "Simple yet addictive"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-02-15"
+  },
+  {
+    id: "nolgaemi-apps",
+    title: "Nolgaemi Apps Collection",
+    thumbnail: "/thumbnails/nolgaemi_apps.png",
+    url: "https://play.google.com/store/search?q=nolgaemiproduction&c=apps&hl=en",
+    type: "android",
+    isNew: true,
+    description: "Google Play 스토어의 Nolgaemi Production 공식 앱 모음 공간입니다.",
+    long_description: "Nolgaemi Production에서 개발하고 출시한 다양한 모바일 스마트폰 앱과 게임들을 구글 플레이스토어 한곳에서 모두 확인해 보세요. 생산성, 언어 학습, 습관 형성 등 다양하고 유용한 앱들을 만나보실 수 있습니다.",
+    instructions: "카드 클릭 시 Google Play 스토어의 Nolgaemi Production 개발자 페이지로 이동합니다.",
+    controls: "클릭 시 Google Play Store 이동",
+    features: [
+      "Google Play 공식 출시 앱 컬렉션",
+      "생산성 및 에듀테인먼트 모바일 앱 모음",
+      "Nolgaemi Production 개발자 페이지 직접 연결"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-08-01"
+  },
+  {
+    id: "mission-success",
+    title: "Mission Success (미션 성공)",
+    thumbnail: "/thumbnails/mission_success.png",
+    url: "https://play.google.com/store/apps/details?id=com.nolgaemi.missionsuccess&hl=en",
+    type: "android",
+    isNew: true,
+    description: "목표 달성과 습관 형성을 도와주는 스마트한 미션 관리 앱입니다.",
+    long_description: "Mission Success는 매일의 습관과 목표를 체계적으로 관리하여 성공으로 이끌어주는 생산성 앱입니다. 간편한 체크리스트와 목표 달성률 트래킹으로 자신만의 긍정적인 라이프스타일을 완성해 보세요.",
+    instructions: "클릭 시 Google Play 스토어 다운로드 페이지로 연결됩니다.",
+    controls: "Google Play Store 다운로드",
+    features: [
+      "직관적인 일일 미션 및 습관 체크리스트",
+      "목표 달성 트래킹 및 통계",
+      "깔끔한 다크 모드 인터페이스"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-08-01"
+  },
+  {
+    id: "eng-friend",
+    title: "EngFriend (영어친구)",
+    thumbnail: "/thumbnails/eng_friend.png",
+    url: "https://play.google.com/store/apps/details?id=com.engfriend.eng_friend&hl=en",
+    type: "android",
+    isNew: true,
+    description: "일상 회화와 영어 표현을 쉽고 재미있게 도와주는 스마트 영어 학습 앱입니다.",
+    long_description: "EngFriend(영어친구)는 언제 어디서나 부담 없이 영어를 익힐 수 있는 학습 앱입니다. 생생한 예문과 핵심 표현 정리로 영어 실력을 차근차근 키워보세요.",
+    instructions: "클릭 시 Google Play 스토어 다운로드 페이지로 연결됩니다.",
+    controls: "Google Play Store 다운로드",
+    features: [
+      "실생활 핵심 영어 표현 학습",
+      "친근하고 직관적인 인터페이스",
+      "모바일 맞춤형 일일 학습 카운터"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-08-01"
+  },
+  {
+    id: "just-note-it",
+    title: "Just Note It (메모잇)",
+    thumbnail: "/thumbnails/just_note_it.png",
+    url: "https://play.google.com/store/apps/details?id=com.nolgaemi.justnoteit&hl=en",
+    type: "android",
+    isNew: true,
+    description: "빠르고 직관적인 스마트 메모 & 아이디어 정리 앱입니다.",
+    long_description: "Just Note It(메모잇)은 떠오르는 영감과 중요한 일정을 놓치지 않고 즉시 기록할 수 있는 깔끔한 메모 앱입니다. 빠르고 간편한 메모 작성과 손쉬운 정리 기능을 제공합니다.",
+    instructions: "클릭 시 Google Play 스토어 다운로드 페이지로 연결됩니다.",
+    controls: "Google Play Store 다운로드",
+    features: [
+      "초고속 텍스트 메모 및 아이디어 기록",
+      "심플하고 가벼운 메모 관리",
+      "모바일 환경에 최적화된 UX"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-08-01"
+  },
+  {
+    id: "guardian",
+    title: "Guardians of the Sky",
+    thumbnail: "/thumbnails/game5.jpeg",
+    url: "https://guardiansofthesky.pages.dev/",
+    type: "html",
+    isNew: true,
+    description: "An intense jet simulation where you, once an ordinary person, become the chosen pilot and humanity's last hope to defend Earth's skies against an alien fleet.",
+    long_description: "One peaceful day, unidentified alien aircraft attacked major cities around the globe, igniting a massive war. Humanity's elite flight squadron, the 'Guardians of the Sky', was pushed to the brink of extinction by the aliens' overwhelming technology. At the moment of global despair, the secret prototype 'Zero' awakened, responding only to your biological signature. You, who lived an ordinary life until yesterday, must now sortie as the only pilot capable of saving Earth.",
+    instructions: "Master the controls of the 'Zero' prototype and engage in intense aerial dogfights. Follow the radar to locate alien targets and clear the skies.",
+    controls: "Speed Up: Left Shift | Brake: Left Control | Turn: Arrow Keys | Pitch: Up/Down Arrows | Fire: Spacebar",
+    features: [
+      "Immersive 3D Jet Simulation Combat",
+      "Thwart the Alien Invasion with Your Jet",
+      "Dynamic Dogfighting mechanics",
+      "Fully realized 3D environment"
+    ],
+    author: "NolGaeMi",
+    last_updated: "2026-02-24"
+  },
+  {
+    id: "imperialpapalotto",
+    title: "임페리얼 파파 로또 대박",
+    thumbnail: "/thumbnails/game6.jpg",
+    url: "https://lotto.funbtstube.workers.dev/",
+    type: "Unique",
+    isNew: true,
+    description: "당신의 운명을 바꿀 단 한 번의 클릭! 임페리얼 파파가 전하는 특별한 행운의 번호로 1등 당첨의 꿈에 도전하세요.",
+    long_description: "평범한 일상 속에서 찾아오는 짜릿한 역전의 기회! '임페리얼 파파 로또 대박'은 정교한 알고리즘을 통해 최적의 로또 번호를 생성해 드립니다. 분석과 운이 만나는 지점에서 당신만의 당첨 번호를 확인하고, 대박의 주인공이 되는 설렘을 만끽해 보세요. 오늘 당신의 손끝에서 새로운 인생이 시작될 수 있습니다.",
+    instructions: "화면 중앙의 '번호 생성' 버튼을 클릭하여 행운의 6개 번호를 확인하세요. 생성된 번호를 저장하거나 실제 로또 구매에 참고할 수 있습니다.",
+    controls: "번호 생성: 마우스 왼쪽 클릭 또는 터치 | 결과 확인: 화면 스크롤",
+    features: [
+      "빠르고 간편한 자동 번호 생성 시스템",
+      "행운을 부르는 세련된 인터페이스",
+      "실시간 번호 조합 최적화 알고리즘",
+      "모바일 및 PC 완벽 호환"
+    ],
+    author: "임페리얼 파파",
+    last_updated: "2026-02-28"
+  },
+  {
+    id: "tetris-3d",
+    title: "3D 테트리스",
+    thumbnail: "/thumbnails/game7.jpg",
+    url: "https://tetris3d.pages.dev/",
+    type: "html",
+    isNew: true,
+    description: "몰입감 넘치는 3D 공간에서 즐기는 테트리스 게임입니다. X, Y, Z축 회전을 통해 블록을 배치하고 레이어를 클리어하세요.",
+    long_description: "TETRIS 3D CUBE EDITION은 클래식한 테트리스를 3차원으로 확장한 혁신적인 퍼즐 게임입니다. 5x5 그리드 기반의 3D 공간에서 다양한 각도로 뷰를 회전하며 공간 지각 능력을 발휘해 보세요. 모바일과 데스크탑 모두에서 완벽하게 즐길 수 있습니다.",
+    instructions: "화면 하단의 화살표 버튼이나 방향키로 블록을 이동하고, X/Y/Z 버튼으로 각 축을 따라 회전시키세요. 카메라 회전 버튼(◁, ▷)을 사용해 조절할 수 있습니다. 드롭 버튼이나 스페이스 바로 블록을 빠르게 내릴 수 있습니다.",
+    controls: "이동: 방향키 또는 화면 화살표 | 회전: q, w, e 키 또는 모바일 버튼 | 하드 드롭: Space 또는 드롭 버튼 | 카메라 회전: ◁, ▷ 버튼 | 홀드: 홀드 버튼",
+    features: [
+      "레이어 클리어 방식의 3D 테트리스",
+      "자유로운 3D 시점 전환",
+      "모바일 터치 최적화 UI",
+      "Next/Hold 프리뷰 시스템",
+      "실시간 리더보드 지원"
+    ],
+    author: "임페리얼 파파",
+    last_updated: "2026-03-08"
+  },
+  {
+    id: "forest-friends",
+    title: "숲속 친구들 (Forest Friends)",
+    thumbnail: "/thumbnails/game8.jpg",
+    url: "https://hyuna.pages.dev/",
+    type: "html",
+    isNew: true,
+    description: "모두를 위한 따뜻한 감성의 인터랙티브 웹 동화. (A warm, interactive storybook for everyone.)",
+    long_description: "'숲속 친구들(Forest Friends)'은 모두를 위해 만들어진 따뜻한 감성의 인터랙티브 웹 동화입니다. 최신 React 기술과 부드러운 애니메이션을 결합하여, 생동감 넘치는 요정 숲의 이야기를 웹 위에서 그대로 펼쳐냅니다. 별도의 설치 없이 PC, 스마트폰, 태블릿 등 어떤 기기에서도 브라우저만 열면 바로 즐길 수 있습니다. 특히 한국어/영어 이중 언어 지원과 원어민 발음의 음성 읽어주기(TTS) 기능을 갖추어, 동화 감상은 물론 자연스러운 언어 학습 효과까지 기대할 수 있는 프리미엄 에듀테인먼트 플랫폼입니다.",
+    instructions: "1. 앱 접속하기: 인터넷이 연결된 기기에서 앱 주소로 접속합니다.\n2. 언어 선택하기: 화면 우측 상단의 🌐 버튼(한국어/English)을 눌러 선택하세요.\n3. 동화책 읽기: [이전] (◀) / [다음] (▶) 버튼으로 페이지를 넘길 수 있습니다.",
+    controls: "[터치 및 마우스] 🌐: 언어 전환 | ◀ / ▶: 페이지 이동 | 🔊 / ⏸️ / ⏹️: 음성 제어",
+    features: [
+      "완벽한 이중 언어 지원 (Bilingual Support)",
+      "브라우저 내장 음성 읽어주기 (Native TTS API)",
+      "감성적인 SVG 일러스트와 부드러운 애니메이션",
+      "100% 반응형 웹 디자인"
+    ],
+    author: "임페리얼파파",
+    last_updated: "2026-03-14"
+  }
+];
 function Home() {
   const [games, setGames] = useState(initialGames || []);
   const [mainTab, setMainTab] = useState("itlog");
   const [gameFilter, setGameFilter] = useState("all");
+  const [visitorStats, setVisitorStats] = useState({ total: 1280, today: 35 });
   const navigate = useNavigate();
   useEffect(() => {
     fetch("/data/games.json").then((res) => res.json()).then((data) => setGames(data)).catch((err) => console.error("Failed to load games:", err));
+    const loadVisitors = async () => {
+      try {
+        const res = await fetch("/api/visitors");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.total) {
+            setVisitorStats({ total: data.total, today: data.today });
+            localStorage.setItem("visitor_stats", JSON.stringify({ total: data.total, today: data.today }));
+            return;
+          }
+        }
+      } catch (e) {
+      }
+      try {
+        const local = localStorage.getItem("visitor_stats");
+        const lastVisit = localStorage.getItem("last_visit_date");
+        const todayStr = (/* @__PURE__ */ new Date()).toISOString().substring(0, 10);
+        let stats = local ? JSON.parse(local) : { total: 1280, today: 35 };
+        if (lastVisit !== todayStr) {
+          stats.total += 1;
+          stats.today = (lastVisit ? stats.today : 35) + 1;
+          localStorage.setItem("last_visit_date", todayStr);
+          localStorage.setItem("visitor_stats", JSON.stringify(stats));
+        }
+        setVisitorStats(stats);
+      } catch (e) {
+      }
+    };
+    loadVisitors();
   }, []);
   const handlePlay = (game) => {
     navigate(`/play/${game.id}`);
@@ -1227,7 +1453,21 @@ function Home() {
       /* @__PURE__ */ jsx("div", { className: "absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80", children: /* @__PURE__ */ jsx("div", { className: "relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-brand-accent to-brand-highlight opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" }) }),
       /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-6 text-center lg:px-8", children: /* @__PURE__ */ jsxs("div", { className: "mx-auto max-w-2xl", children: [
         /* @__PURE__ */ jsx("h1", { className: "text-5xl font-extrabold tracking-tight text-white sm:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-brand-highlight to-brand-accent mb-4", children: "ant@IT" }),
-        /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg leading-8 text-slate-300", children: "IT 정보, 개발 지식, 코딩, AI 지식을 의미있게" })
+        /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg leading-8 text-slate-300", children: "IT 정보, 개발 지식, 코딩, AI 지식을 의미있게" }),
+        /* @__PURE__ */ jsxs("div", { className: "mt-6 inline-flex items-center gap-4 px-4 py-2 bg-slate-800/60 border border-slate-700/60 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg", children: [
+          /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-1.5 text-slate-300", children: [
+            /* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }),
+            "오늘 방문자 ",
+            /* @__PURE__ */ jsx("strong", { className: "text-emerald-400 font-mono", children: visitorStats.today }),
+            " 명"
+          ] }),
+          /* @__PURE__ */ jsx("span", { className: "text-slate-600", children: "|" }),
+          /* @__PURE__ */ jsxs("span", { className: "text-slate-400", children: [
+            "누적 방문자 ",
+            /* @__PURE__ */ jsx("strong", { className: "text-brand-highlight font-mono", children: visitorStats.total.toLocaleString() }),
+            " 명"
+          ] })
+        ] })
       ] }) })
     ] }),
     /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-6 lg:px-8 mb-10", children: /* @__PURE__ */ jsx("div", { className: "w-full h-24 bg-slate-800/80 rounded-xl flex items-center justify-center text-slate-500 border border-slate-700/60 border-dashed", children: /* @__PURE__ */ jsx("span", { children: "Advertisement Space" }) }) }),

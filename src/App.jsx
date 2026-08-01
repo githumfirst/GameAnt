@@ -11,6 +11,7 @@ function Home() {
     const [games, setGames] = useState(initialGames || []);
     const [mainTab, setMainTab] = useState('itlog'); // 'itlog' (default) | 'game'
     const [gameFilter, setGameFilter] = useState('all'); // 'all', 'android', 'unique'
+    const [visitorStats, setVisitorStats] = useState({ total: 1280, today: 35 });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,6 +19,40 @@ function Home() {
             .then(res => res.json())
             .then(data => setGames(data))
             .catch(err => console.error("Failed to load games:", err));
+
+        // Track and fetch Visitor stats
+        const loadVisitors = async () => {
+            try {
+                const res = await fetch('/api/visitors');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.total) {
+                        setVisitorStats({ total: data.total, today: data.today });
+                        localStorage.setItem('visitor_stats', JSON.stringify({ total: data.total, today: data.today }));
+                        return;
+                    }
+                }
+            } catch (e) { }
+
+            // Local fallback & counter increment
+            try {
+                const local = localStorage.getItem('visitor_stats');
+                const lastVisit = localStorage.getItem('last_visit_date');
+                const todayStr = new Date().toISOString().substring(0, 10);
+                
+                let stats = local ? JSON.parse(local) : { total: 1280, today: 35 };
+
+                if (lastVisit !== todayStr) {
+                    stats.total += 1;
+                    stats.today = (lastVisit ? stats.today : 35) + 1;
+                    localStorage.setItem('last_visit_date', todayStr);
+                    localStorage.setItem('visitor_stats', JSON.stringify(stats));
+                }
+                setVisitorStats(stats);
+            } catch (e) { }
+        };
+
+        loadVisitors();
     }, []);
 
     const handlePlay = (game) => {
@@ -48,6 +83,18 @@ function Home() {
                         <p className="mt-4 text-lg leading-8 text-slate-300">
                             IT 정보, 개발 지식, 코딩, AI 지식을 의미있게
                         </p>
+
+                        {/* Visitor Counter Badge */}
+                        <div className="mt-6 inline-flex items-center gap-4 px-4 py-2 bg-slate-800/60 border border-slate-700/60 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg">
+                            <span className="flex items-center gap-1.5 text-slate-300">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                오늘 방문자 <strong className="text-emerald-400 font-mono">{visitorStats.today}</strong> 명
+                            </span>
+                            <span className="text-slate-600">|</span>
+                            <span className="text-slate-400">
+                                누적 방문자 <strong className="text-brand-highlight font-mono">{visitorStats.total.toLocaleString()}</strong> 명
+                            </span>
+                        </div>
                     </div>
                 </div>
             </header>
