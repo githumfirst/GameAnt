@@ -183,6 +183,32 @@ function DevLogList() {
     useEffect(() => {
         loadCommunityPosts();
 
+        // Check if initial page URL is a direct /post/:id link
+        const pathname = window.location.pathname;
+        const postMatch = pathname.match(/^\/post\/(.+)$/);
+        if (postMatch) {
+            const targetRawId = postMatch[1];
+            fetch(`/api/posts/${targetRawId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.title) {
+                        const directPost = {
+                            id: `community-${targetRawId}`,
+                            rawId: targetRawId,
+                            isSSG: false,
+                            title: data.title,
+                            writer: data.author,
+                            views: data.views || 1,
+                            comment_count: data.comment_count || 0,
+                            date: data.created_at ? data.created_at.substring(0, 10) : 'Recent',
+                            content: data.content
+                        };
+                        setSelectedPost(directPost);
+                    }
+                })
+                .catch(() => { });
+        }
+
         const handleStorageChange = () => {
             loadCommunityPosts();
         };
@@ -220,16 +246,27 @@ function DevLogList() {
 
         if (post.isSSG) {
             setSelectedPost(updatedPost);
+            if (post.slug) {
+                window.history.pushState({}, '', `/devlog/${post.slug}`);
+            }
         } else {
             setCommunityPosts(prev => prev.map(p => p.id === post.id ? updatedPost : p));
             setSelectedPost(updatedPost);
 
-            try {
-                if (post.rawId) {
-                    fetch(`/api/posts/${post.rawId}`).catch(() => { });
-                }
-            } catch (e) { }
+            const rawId = post.rawId || String(post.id).replace(/^community-/, '');
+            if (rawId) {
+                // Update URL to /post/:id so AdSense crawler and direct visitors get full Edge SSR HTML
+                window.history.pushState({}, '', `/post/${rawId}`);
+                try {
+                    fetch(`/api/posts/${rawId}`).catch(() => { });
+                } catch (e) { }
+            }
         }
+    };
+
+    const handleClosePost = () => {
+        setSelectedPost(null);
+        window.history.pushState({}, '', '/devlog');
     };
 
     const handleDeletePost = async () => {
@@ -264,7 +301,7 @@ function DevLogList() {
         localStorage.setItem('community_posts', JSON.stringify(updated));
 
         if (selectedPost && selectedPost.id === deleteModal.postId) {
-            setSelectedPost(null);
+            handleClosePost();
         }
         setDeleteModal({ open: false, postId: null, password: '' });
         setDeleteError('');
@@ -504,7 +541,7 @@ function DevLogList() {
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 md:p-6 backdrop-blur-sm overflow-y-auto">
                     <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl lg:max-w-5xl w-full p-6 md:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600">
                         <button
-                            onClick={() => setSelectedPost(null)}
+                            onClick={handleClosePost}
                             className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors"
                         >
                             <X size={20} />

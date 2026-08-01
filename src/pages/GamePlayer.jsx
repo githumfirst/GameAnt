@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Maximize2, Minimize2, Smartphone, Download, Calendar, User, Info, Play } from 'lucide-react';
+import gamesData from '../../public/data/games.json';
 
 const GamePlayer = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [game, setGame] = useState(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isStarted, setIsStarted] = useState(false);
     const iframeRef = React.useRef(null);
+
+    // Synchronously resolve game data for SSR/SSG rendering
+    const game = gamesData.find(g => g.id === id) || null;
 
     useEffect(() => {
         const handleFullScreenChange = () => {
@@ -20,21 +23,6 @@ const GamePlayer = () => {
             document.removeEventListener('fullscreenchange', handleFullScreenChange);
         };
     }, []);
-
-    useEffect(() => {
-        fetch('/data/games.json')
-            .then(res => res.json())
-            .then(data => {
-                const foundGame = data.find(g => g.id === id);
-                if (foundGame) {
-                    setGame(foundGame);
-                } else {
-                    console.error("Game not found");
-                    navigate('/'); // Redirect to home if game not found
-                }
-            })
-            .catch(err => console.error("Failed to load games:", err));
-    }, [id, navigate]);
 
     const handleStartGame = () => {
         setIsStarted(true);
