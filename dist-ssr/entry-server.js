@@ -518,6 +518,7 @@ function CommentSection({ postId }) {
     const updated = [...comments, newCommentObj];
     setComments(updated);
     localStorage.setItem(storageKey, JSON.stringify(updated));
+    window.dispatchEvent(new Event("storage"));
     setContent("");
     setSubmitting(false);
   };
@@ -670,16 +671,29 @@ function CommentSection({ postId }) {
   ] });
 }
 const rawMarkdownFiles$1 = /* @__PURE__ */ Object.assign({ "../content/devlog/password_forgot_kor.md": __vite_glob_0_0, "../content/devlog/tetris.md": __vite_glob_0_1, "../content/devlog/vive-coding_korean.md": __vite_glob_0_2, "../content/devlog/welcome.md": __vite_glob_0_3 });
-function getCommentCount(postId) {
-  try {
-    const local = localStorage.getItem(`comments_${postId}`);
-    if (local) {
-      const parsed = JSON.parse(local);
-      return parsed.length || 0;
+function getCommentCount(post) {
+  if (!post) return 0;
+  const candidates = [
+    `comments_${post.id}`,
+    `comments_${post.slug}`,
+    `comments_article-${post.slug}`,
+    `comments_community-${post.rawId || post.id}`,
+    `comments_${post.rawId}`
+  ];
+  for (const key of candidates) {
+    if (!key) continue;
+    try {
+      const local = localStorage.getItem(key);
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.length;
+        }
+      }
+    } catch (e) {
     }
-  } catch (e) {
   }
-  return 0;
+  return post.comment_count || 0;
 }
 function getViewCount$1(postId, defaultViews = 15) {
   try {
@@ -763,7 +777,7 @@ function DevLogList() {
             title: p.title,
             writer: p.author,
             views: getViewCount$1(`community-${p.id}`, p.views || 1),
-            comment_count: p.comment_count || getCommentCount(`community-${p.id}`),
+            comment_count: p.comment_count || 0,
             date: p.created_at ? p.created_at.substring(0, 10) : "Recent",
             content: p.content
           }));
@@ -785,8 +799,7 @@ function DevLogList() {
             ...p,
             id: `community-${cleanId}`,
             rawId: cleanId,
-            views: getViewCount$1(`community-${cleanId}`, p.views || 1),
-            comment_count: getCommentCount(`community-${cleanId}`)
+            views: getViewCount$1(`community-${cleanId}`, p.views || 1)
           };
         });
         setCommunityPosts(updated);
@@ -797,6 +810,11 @@ function DevLogList() {
   };
   useEffect(() => {
     loadCommunityPosts();
+    const handleStorageChange = () => {
+      loadCommunityPosts();
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
   const handlePostCreated = (newPost) => {
     const cleanId = String(newPost.id || Date.now()).replace(/^community-/, "");
@@ -931,7 +949,7 @@ function DevLogList() {
           /* @__PURE__ */ jsx("th", { scope: "col", className: "px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider w-32", children: "작성일" })
         ] }) }),
         /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-slate-700/50 bg-slate-800/30", children: currentPosts.length > 0 ? currentPosts.map((post) => {
-          const cCount = getCommentCount(post.id);
+          const cCount = getCommentCount(post);
           return /* @__PURE__ */ jsxs("tr", { className: "hover:bg-slate-700/40 transition-colors", children: [
             /* @__PURE__ */ jsx("td", { className: "px-5 py-4 whitespace-nowrap text-xs", children: post.isSSG ? /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20", children: [
               /* @__PURE__ */ jsx(Sparkles, { size: 10 }),

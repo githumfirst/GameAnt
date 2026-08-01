@@ -6,15 +6,29 @@ import CommentSection from '../components/CommentSection';
 
 const rawMarkdownFiles = import.meta.glob('../content/devlog/*.md', { query: '?raw', import: 'default', eager: true });
 
-function getCommentCount(postId) {
-    try {
-        const local = localStorage.getItem(`comments_${postId}`);
-        if (local) {
-            const parsed = JSON.parse(local);
-            return parsed.length || 0;
-        }
-    } catch (e) { }
-    return 0;
+function getCommentCount(post) {
+    if (!post) return 0;
+    const candidates = [
+        `comments_${post.id}`,
+        `comments_${post.slug}`,
+        `comments_article-${post.slug}`,
+        `comments_community-${post.rawId || post.id}`,
+        `comments_${post.rawId}`
+    ];
+
+    for (const key of candidates) {
+        if (!key) continue;
+        try {
+            const local = localStorage.getItem(key);
+            if (local) {
+                const parsed = JSON.parse(local);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed.length;
+                }
+            }
+        } catch (e) { }
+    }
+    return post.comment_count || 0;
 }
 
 function getViewCount(postId, defaultViews = 15) {
@@ -107,7 +121,7 @@ function DevLogList() {
                         title: p.title,
                         writer: p.author,
                         views: getViewCount(`community-${p.id}`, p.views || 1),
-                        comment_count: p.comment_count || getCommentCount(`community-${p.id}`),
+                        comment_count: p.comment_count || 0,
                         date: p.created_at ? p.created_at.substring(0, 10) : 'Recent',
                         content: p.content
                     }));
@@ -131,8 +145,7 @@ function DevLogList() {
                         ...p,
                         id: `community-${cleanId}`,
                         rawId: cleanId,
-                        views: getViewCount(`community-${cleanId}`, p.views || 1),
-                        comment_count: getCommentCount(`community-${cleanId}`)
+                        views: getViewCount(`community-${cleanId}`, p.views || 1)
                     };
                 });
                 setCommunityPosts(updated);
@@ -144,6 +157,13 @@ function DevLogList() {
 
     useEffect(() => {
         loadCommunityPosts();
+
+        const handleStorageChange = () => {
+            loadCommunityPosts();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     const handlePostCreated = (newPost) => {
@@ -164,7 +184,6 @@ function DevLogList() {
         setCommunityPosts(updated);
         localStorage.setItem('community_posts', JSON.stringify(updated));
 
-        // Re-sync with D1 DB API
         setTimeout(() => {
             loadCommunityPosts();
         }, 500);
@@ -305,7 +324,7 @@ function DevLogList() {
                             <tbody className="divide-y divide-slate-700/50 bg-slate-800/30">
                                 {currentPosts.length > 0 ? (
                                     currentPosts.map((post) => {
-                                        const cCount = getCommentCount(post.id);
+                                        const cCount = getCommentCount(post);
 
                                         return (
                                             <tr key={post.id} className="hover:bg-slate-700/40 transition-colors">

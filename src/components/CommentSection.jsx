@@ -87,6 +87,7 @@ function CommentSection({ postId }) {
         const updated = [...comments, newCommentObj];
         setComments(updated);
         localStorage.setItem(storageKey, JSON.stringify(updated));
+        window.dispatchEvent(new Event('storage'));
 
         setContent('');
         setSubmitting(false);
