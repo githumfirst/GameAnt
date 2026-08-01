@@ -1470,7 +1470,6 @@ function Home() {
         ] })
       ] }) })
     ] }),
-    /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-6 lg:px-8 mb-10", children: /* @__PURE__ */ jsx("div", { className: "w-full h-24 bg-slate-800/80 rounded-xl flex items-center justify-center text-slate-500 border border-slate-700/60 border-dashed", children: /* @__PURE__ */ jsx("span", { children: "Advertisement Space" }) }) }),
     /* @__PURE__ */ jsxs("div", { className: "flex justify-center gap-4 mb-10 border-b border-slate-800 pb-8 px-6", children: [
       /* @__PURE__ */ jsxs(
         "button",
