@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronLeft, ChevronRight, FileText, PenTool, MessageSquare, Sparkles, X, Trash2, Eye, Edit3 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import BoardWriteModal from '../components/BoardWriteModal';
 import BoardEditModal from '../components/BoardEditModal';
 import CommentSection from '../components/CommentSection';
@@ -500,8 +501,8 @@ function DevLogList() {
 
             {/* Selected Post Detail Modal */}
             {selectedPost && (
-                <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-                    <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 md:p-6 backdrop-blur-sm overflow-y-auto">
+                    <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl lg:max-w-5xl w-full p-6 md:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600">
                         <button
                             onClick={() => setSelectedPost(null)}
                             className="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors"
@@ -550,10 +551,32 @@ function DevLogList() {
                             </div>
                         </div>
 
-                        <div className="prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40 prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto">
+                        {/* Post Content Box with Dedicated Vertical Scrollbar */}
+                        <div className="prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-8 bg-slate-900/60 p-5 rounded-xl border border-slate-700/50 prose-img:rounded-xl prose-img:max-h-[600px] prose-img:mx-auto max-h-[65vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 shadow-inner">
                             <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
                                 urlTransform={(url) => url}
                                 components={{
+                                    table: ({ node, ...props }) => (
+                                        <div className="overflow-x-auto my-6 rounded-xl border border-slate-700/60 shadow-xl bg-slate-800/40">
+                                            <table className="min-w-full divide-y divide-slate-700/60 text-left text-sm" {...props} />
+                                        </div>
+                                    ),
+                                    thead: ({ node, ...props }) => (
+                                        <thead className="bg-slate-800/90 text-brand-highlight font-extrabold text-xs tracking-wider border-b border-slate-700" {...props} />
+                                    ),
+                                    tbody: ({ node, ...props }) => (
+                                        <tbody className="divide-y divide-slate-700/50 bg-slate-900/30" {...props} />
+                                    ),
+                                    tr: ({ node, ...props }) => (
+                                        <tr className="hover:bg-slate-700/30 transition-colors" {...props} />
+                                    ),
+                                    th: ({ node, ...props }) => (
+                                        <th className="px-4 py-3 font-bold text-slate-200 border-r border-slate-700/40 last:border-r-0" {...props} />
+                                    ),
+                                    td: ({ node, ...props }) => (
+                                        <td className="px-4 py-3 text-slate-300 border-r border-slate-700/30 last:border-r-0 leading-normal" {...props} />
+                                    ),
                                     a: ({ node, href, children, ...props }) => (
                                         <a
                                             href={href}

@@ -97,6 +97,37 @@ function renderMarkdownToHtml(text) {
         return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank', 'width=1024,height=800,scrollbars=yes,resizable=yes'); return false;" class="text-sky-400 underline font-semibold cursor-pointer">${url}</a>`;
     });
 
+    // Parse Markdown tables (| col1 | col2 |) into styled HTML tables
+    escaped = escaped.replace(/((?:\|[^\n]+\|\r?\n)+)/g, (match) => {
+        const lines = match.trim().split(/\r?\n/);
+        if (lines.length < 2) return match;
+
+        let tableHtml = '<div class="overflow-x-auto my-6 rounded-xl border border-slate-700/60 shadow-xl bg-slate-800/40"><table class="min-w-full divide-y divide-slate-700/60 text-left text-sm">';
+        
+        // Header
+        const headerCells = lines[0].split('|').slice(1, -1).map(c => c.trim());
+        tableHtml += '<thead class="bg-slate-800/90 text-amber-400 font-extrabold text-xs tracking-wider border-b border-slate-700"><tr>';
+        headerCells.forEach(cell => {
+            tableHtml += `<th class="px-4 py-3 border-r border-slate-700/40 last:border-r-0">${cell}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody class="divide-y divide-slate-700/50 bg-slate-900/30">';
+
+        // Skip separator line (lines[1])
+        const startRow = lines[1] && lines[1].includes('---') ? 2 : 1;
+
+        for (let i = startRow; i < lines.length; i++) {
+            const dataCells = lines[i].split('|').slice(1, -1).map(c => c.trim());
+            tableHtml += '<tr class="hover:bg-slate-700/30 transition-colors">';
+            dataCells.forEach(cell => {
+                tableHtml += `<td class="px-4 py-3 text-slate-300 border-r border-slate-700/30 last:border-r-0">${cell}</td>`;
+            });
+            tableHtml += '</tr>';
+        }
+
+        tableHtml += '</tbody></table></div>';
+        return tableHtml;
+    });
+
     // Convert newlines to paragraphs
     const paragraphs = escaped.split('\n\n').map(p => `<p class="mb-4 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`);
     return paragraphs.join('');

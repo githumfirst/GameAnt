@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactDOMServer from "react-dom/server";
 import { StaticRouter } from "react-router";
 import { useParams, useNavigate, Link, Routes, Route } from "react-router-dom";
-import { ArrowLeft, Info, Minimize2, Maximize2, Play, Smartphone, User, Calendar, X, Edit3, Lock, Loader2, Image, Check, MessageSquare, Send, Trash2, FileText, PenTool, Search, Sparkles, Eye, ChevronLeft, ChevronRight, FileCode2, Gamepad, Globe, Gamepad2 } from "lucide-react";
+import { ArrowLeft, Info, Minimize2, Maximize2, Play, Smartphone, User, Calendar, X, Edit3, FileText, Eye, Lock, Loader2, Image, Check, MessageSquare, Send, Trash2, PenTool, Search, Sparkles, ChevronLeft, ChevronRight, FileCode2, Gamepad, Globe, Gamepad2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 const GamePlayer = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -280,11 +281,80 @@ Stay tuned for more updates!\r
 \r
 Contact Us: WeListenToCustomer@gmail.com\r
 `;
+function convertClipboardTableToMarkdown$1(clipboardData) {
+  if (!clipboardData) return null;
+  let matrix = [];
+  const htmlText = clipboardData.getData("text/html");
+  if (htmlText && (htmlText.includes("<table") || htmlText.includes("<tr"))) {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlText, "text/html");
+      const table = doc.querySelector("table");
+      if (table) {
+        const trs = Array.from(table.querySelectorAll("tr"));
+        matrix = trs.map((tr) => {
+          const cells = Array.from(tr.querySelectorAll("th, td"));
+          return cells.map((cell) => cell.textContent ? cell.textContent.replace(/\r?\n+/g, " ").trim() : "");
+        }).filter((row) => row.length > 0);
+      }
+    } catch (e) {
+    }
+  }
+  if (matrix.length === 0) {
+    const plainText = clipboardData.getData("text/plain");
+    if (plainText && plainText.includes("	")) {
+      const lines = plainText.trim().split(/\r?\n/).filter((line) => line.trim().length > 0);
+      if (lines.length > 0) {
+        matrix = lines.map((line) => line.split("	").map((cell) => cell.replace(/\r?\n+/g, " ").trim()));
+      }
+    }
+  }
+  if (matrix.length === 0) return null;
+  const colCount = Math.max(...matrix.map((r) => r.length));
+  if (colCount < 2) return null;
+  const getVisualWidth = (str) => {
+    let width = 0;
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      if (code >= 44032 && code <= 55203 || code >= 4352 && code <= 4607 || code >= 12592 && code <= 12687) {
+        width += 2;
+      } else {
+        width += 1;
+      }
+    }
+    return width;
+  };
+  const padCell = (str, targetVisualWidth) => {
+    const currentVisualWidth = getVisualWidth(str);
+    const missing = Math.max(0, targetVisualWidth - currentVisualWidth);
+    return str + " ".repeat(missing);
+  };
+  const colWidths = Array.from({ length: colCount }, (_, c) => {
+    let maxW = 3;
+    for (let r = 0; r < matrix.length; r++) {
+      const val = matrix[r][c] || (r === 0 ? `열 ${c + 1}` : "");
+      const w = getVisualWidth(val);
+      if (w > maxW) maxW = w;
+    }
+    return maxW;
+  });
+  let md = "\n\n";
+  const headerCells = Array.from({ length: colCount }, (_, c) => padCell(matrix[0][c] || `열 ${c + 1}`, colWidths[c]));
+  md += "| " + headerCells.join(" | ") + " |\n";
+  const sepCells = Array.from({ length: colCount }, (_, c) => "-".repeat(Math.max(3, colWidths[c])));
+  md += "| " + sepCells.join(" | ") + " |\n";
+  for (let r = 1; r < matrix.length; r++) {
+    const rowCells = Array.from({ length: colCount }, (_, c) => padCell(matrix[r][c] || "", colWidths[c]));
+    md += "| " + rowCells.join(" | ") + " |\n";
+  }
+  return md + "\n";
+}
 function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [password, setPassword] = useState("");
   const [content, setContent] = useState("");
+  const [activeTab, setActiveTab] = useState("write");
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef(null);
@@ -304,16 +374,30 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
   };
   const handlePaste = (e) => {
     const clipboardData = e.clipboardData;
-    if (!clipboardData || !clipboardData.items) return;
-    for (let i = 0; i < clipboardData.items.length; i++) {
-      const item = clipboardData.items[i];
-      if (item.type.startsWith("image/")) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        if (file) {
-          processImageFile(file);
+    if (!clipboardData) return;
+    if (clipboardData.items) {
+      for (let i = 0; i < clipboardData.items.length; i++) {
+        const item = clipboardData.items[i];
+        if (item.type.startsWith("image/")) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) {
+            processImageFile(file);
+          }
+          return;
         }
-        break;
+      }
+    }
+    const tableMarkdown = convertClipboardTableToMarkdown$1(clipboardData);
+    if (tableMarkdown) {
+      e.preventDefault();
+      if (textareaRef.current) {
+        const start = textareaRef.current.selectionStart || content.length;
+        const end = textareaRef.current.selectionEnd || content.length;
+        const newContent = content.substring(0, start) + tableMarkdown + content.substring(end);
+        setContent(newContent);
+      } else {
+        setContent((prev) => prev + tableMarkdown);
       }
     }
   };
@@ -397,7 +481,7 @@ ${shortcode}
     setSubmitting(false);
     onClose();
   };
-  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
+  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 md:p-6 backdrop-blur-sm overflow-y-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl lg:max-w-5xl w-full p-6 md:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto", children: [
     /* @__PURE__ */ jsx(
       "button",
       {
@@ -406,12 +490,40 @@ ${shortcode}
           onClose();
         },
         className: "absolute top-5 right-5 text-slate-400 hover:text-white transition-colors",
-        children: /* @__PURE__ */ jsx(X, { size: 20 })
+        children: /* @__PURE__ */ jsx(X, { size: 22 })
       }
     ),
-    /* @__PURE__ */ jsxs("h3", { className: "text-2xl font-bold text-white mb-6 flex items-center gap-2", children: [
-      /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 24 }),
-      "ant@IT 새 글 작성"
+    /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-slate-700/60 pb-4", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 28 }),
+        "ant@IT 새 글 작성"
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/80", children: [
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setActiveTab("write"),
+            className: `flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === "write" ? "bg-brand-accent text-white shadow-md" : "text-slate-400 hover:text-white"}`,
+            children: [
+              /* @__PURE__ */ jsx(FileText, { size: 14 }),
+              " 작성하기"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setActiveTab("preview"),
+            className: `flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === "preview" ? "bg-brand-accent text-white shadow-md" : "text-slate-400 hover:text-white"}`,
+            children: [
+              /* @__PURE__ */ jsx(Eye, { size: 14 }),
+              " 👁️ 실시간 표/완성 미리보기"
+            ]
+          }
+        )
+      ] })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-5", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -423,7 +535,7 @@ ${shortcode}
             placeholder: "제목을 입력하세요",
             value: title,
             onChange: (e) => setTitle(e.target.value),
-            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
+            className: "w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl text-base text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
             maxLength: 100
           }
         )
@@ -432,7 +544,7 @@ ${shortcode}
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx("label", { className: "block text-xs font-semibold text-slate-400 mb-1", children: "작성자 (닉네임)" }),
           /* @__PURE__ */ jsxs("div", { className: "relative", children: [
-            /* @__PURE__ */ jsx(User, { className: "absolute left-3 top-3 h-4 w-4 text-slate-500" }),
+            /* @__PURE__ */ jsx(User, { className: "absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" }),
             /* @__PURE__ */ jsx(
               "input",
               {
@@ -440,7 +552,7 @@ ${shortcode}
                 placeholder: "닉네임",
                 value: author,
                 onChange: (e) => setAuthor(e.target.value),
-                className: "w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
+                className: "w-full pl-10 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
                 maxLength: 20
               }
             )
@@ -449,7 +561,7 @@ ${shortcode}
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx("label", { className: "block text-xs font-semibold text-slate-400 mb-1", children: "비밀번호 (삭제용)" }),
           /* @__PURE__ */ jsxs("div", { className: "relative", children: [
-            /* @__PURE__ */ jsx(Lock, { className: "absolute left-3 top-3 h-4 w-4 text-slate-500" }),
+            /* @__PURE__ */ jsx(Lock, { className: "absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" }),
             /* @__PURE__ */ jsx(
               "input",
               {
@@ -457,7 +569,7 @@ ${shortcode}
                 placeholder: "비밀번호",
                 value: password,
                 onChange: (e) => setPassword(e.target.value),
-                className: "w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
+                className: "w-full pl-10 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
                 maxLength: 20
               }
             )
@@ -465,10 +577,10 @@ ${shortcode}
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-1.5", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
           /* @__PURE__ */ jsxs("label", { className: "block text-xs font-semibold text-slate-400", children: [
-            "내용 ",
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] text-brand-highlight font-normal ml-2", children: "💡 캡처 후 Ctrl+V 로 바로 이미지 붙여넣기 가능!" })
+            "본문 내용 ",
+            /* @__PURE__ */ jsx("span", { className: "text-[11px] text-brand-highlight font-normal ml-2", children: "💡 워드/엑셀 표 복사나 캡처 이미지 Ctrl+V 로 바로 붙여넣기 가능!" })
           ] }),
           /* @__PURE__ */ jsx(
             "button",
@@ -479,12 +591,12 @@ ${shortcode}
                 return (_a = fileInputRef.current) == null ? void 0 : _a.click();
               },
               disabled: uploadingImage,
-              className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
+              className: "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
               children: uploadingImage ? /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx(Loader2, { size: 14, className: "animate-spin text-brand-accent" }),
+                /* @__PURE__ */ jsx(Loader2, { size: 15, className: "animate-spin text-brand-accent" }),
                 "이미지 읽는 중..."
               ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx(Image, { size: 14, className: "text-brand-accent" }),
+                /* @__PURE__ */ jsx(Image, { size: 15, className: "text-brand-accent" }),
                 "🖼️ 이미지 첨부"
               ] })
             }
@@ -500,18 +612,39 @@ ${shortcode}
             }
           )
         ] }),
-        /* @__PURE__ */ jsx(
+        activeTab === "write" ? /* @__PURE__ */ jsx(
           "textarea",
           {
             ref: textareaRef,
-            rows: 8,
+            rows: 14,
             onPaste: handlePaste,
-            placeholder: "글을 작성해 보세요. [Windows+Shift+S]로 캡처 후 [Ctrl+V]를 누르면 커서 자리에 이미지가 즉시 붙여넣어집니다.",
+            placeholder: "글을 작성해 보세요. MS 워드/한글/엑셀 표를 복사해서 [Ctrl+V]를 누르면 깨짐 없이 파이프(|) 기호가 수직으로 정갈하게 맞춰집니다.",
             value: content,
             onChange: (e) => setContent(e.target.value),
-            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none leading-relaxed font-mono text-xs sm:text-sm"
+            className: "w-full p-4 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-y leading-relaxed font-mono min-h-[380px] whitespace-pre"
           }
-        )
+        ) : /* @__PURE__ */ jsxs("div", { className: "w-full p-6 bg-slate-900 border border-slate-700 rounded-xl min-h-[380px] max-h-[500px] overflow-y-auto", children: [
+          /* @__PURE__ */ jsxs("div", { className: "text-xs text-brand-highlight font-extrabold mb-3 flex items-center gap-1 border-b border-slate-800 pb-2", children: [
+            /* @__PURE__ */ jsx(Eye, { size: 14 }),
+            " 👁️ 게시글 완성 실시간 표/본문 모습 미리보기"
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto", children: /* @__PURE__ */ jsx(
+            ReactMarkdown,
+            {
+              remarkPlugins: [remarkGfm],
+              urlTransform: (url) => url,
+              components: {
+                table: ({ node, ...props }) => /* @__PURE__ */ jsx("div", { className: "overflow-x-auto my-4 rounded-xl border border-slate-700/60 shadow-xl bg-slate-800/40", children: /* @__PURE__ */ jsx("table", { className: "min-w-full divide-y divide-slate-700/60 text-left text-sm", ...props }) }),
+                thead: ({ node, ...props }) => /* @__PURE__ */ jsx("thead", { className: "bg-slate-800/90 text-brand-highlight font-extrabold text-xs tracking-wider border-b border-slate-700", ...props }),
+                tbody: ({ node, ...props }) => /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-slate-700/50 bg-slate-900/30", ...props }),
+                tr: ({ node, ...props }) => /* @__PURE__ */ jsx("tr", { className: "hover:bg-slate-700/30 transition-colors", ...props }),
+                th: ({ node, ...props }) => /* @__PURE__ */ jsx("th", { className: "px-4 py-3 font-bold text-slate-200 border-r border-slate-700/40 last:border-r-0", ...props }),
+                td: ({ node, ...props }) => /* @__PURE__ */ jsx("td", { className: "px-4 py-3 text-slate-300 border-r border-slate-700/30 last:border-r-0 leading-normal", ...props })
+              },
+              children: content ? content : "*아직 작성된 내용이 없습니다.*"
+            }
+          ) })
+        ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "flex justify-end gap-3 pt-2", children: [
         /* @__PURE__ */ jsx(
@@ -522,7 +655,7 @@ ${shortcode}
               imageMapRef.current = {};
               onClose();
             },
-            className: "px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded-lg transition-colors font-medium",
+            className: "px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded-xl transition-colors font-medium",
             children: "취소"
           }
         ),
@@ -531,7 +664,7 @@ ${shortcode}
           {
             type: "submit",
             disabled: submitting || uploadingImage,
-            className: "px-6 py-2.5 bg-brand-accent hover:bg-brand-highlight text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30",
+            className: "px-7 py-3 bg-brand-accent hover:bg-brand-highlight text-white text-sm font-extrabold rounded-xl transition-colors flex items-center gap-2 shadow-xl shadow-brand-accent/30",
             children: [
               /* @__PURE__ */ jsx(Check, { size: 18 }),
               "글 등록하기"
@@ -542,10 +675,79 @@ ${shortcode}
     ] })
   ] }) });
 }
+function convertClipboardTableToMarkdown(clipboardData) {
+  if (!clipboardData) return null;
+  let matrix = [];
+  const htmlText = clipboardData.getData("text/html");
+  if (htmlText && (htmlText.includes("<table") || htmlText.includes("<tr"))) {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlText, "text/html");
+      const table = doc.querySelector("table");
+      if (table) {
+        const trs = Array.from(table.querySelectorAll("tr"));
+        matrix = trs.map((tr) => {
+          const cells = Array.from(tr.querySelectorAll("th, td"));
+          return cells.map((cell) => cell.textContent ? cell.textContent.replace(/\r?\n+/g, " ").trim() : "");
+        }).filter((row) => row.length > 0);
+      }
+    } catch (e) {
+    }
+  }
+  if (matrix.length === 0) {
+    const plainText = clipboardData.getData("text/plain");
+    if (plainText && plainText.includes("	")) {
+      const lines = plainText.trim().split(/\r?\n/).filter((line) => line.trim().length > 0);
+      if (lines.length > 0) {
+        matrix = lines.map((line) => line.split("	").map((cell) => cell.replace(/\r?\n+/g, " ").trim()));
+      }
+    }
+  }
+  if (matrix.length === 0) return null;
+  const colCount = Math.max(...matrix.map((r) => r.length));
+  if (colCount < 2) return null;
+  const getVisualWidth = (str) => {
+    let width = 0;
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      if (code >= 44032 && code <= 55203 || code >= 4352 && code <= 4607 || code >= 12592 && code <= 12687) {
+        width += 2;
+      } else {
+        width += 1;
+      }
+    }
+    return width;
+  };
+  const padCell = (str, targetVisualWidth) => {
+    const currentVisualWidth = getVisualWidth(str);
+    const missing = Math.max(0, targetVisualWidth - currentVisualWidth);
+    return str + " ".repeat(missing);
+  };
+  const colWidths = Array.from({ length: colCount }, (_, c) => {
+    let maxW = 3;
+    for (let r = 0; r < matrix.length; r++) {
+      const val = matrix[r][c] || (r === 0 ? `열 ${c + 1}` : "");
+      const w = getVisualWidth(val);
+      if (w > maxW) maxW = w;
+    }
+    return maxW;
+  });
+  let md = "\n\n";
+  const headerCells = Array.from({ length: colCount }, (_, c) => padCell(matrix[0][c] || `열 ${c + 1}`, colWidths[c]));
+  md += "| " + headerCells.join(" | ") + " |\n";
+  const sepCells = Array.from({ length: colCount }, (_, c) => "-".repeat(Math.max(3, colWidths[c])));
+  md += "| " + sepCells.join(" | ") + " |\n";
+  for (let r = 1; r < matrix.length; r++) {
+    const rowCells = Array.from({ length: colCount }, (_, c) => padCell(matrix[r][c] || "", colWidths[c]));
+    md += "| " + rowCells.join(" | ") + " |\n";
+  }
+  return md + "\n";
+}
 function BoardEditModal({ isOpen, onClose, post, onPostUpdated }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("write");
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -583,16 +785,30 @@ function BoardEditModal({ isOpen, onClose, post, onPostUpdated }) {
   };
   const handlePaste = (e) => {
     const clipboardData = e.clipboardData;
-    if (!clipboardData || !clipboardData.items) return;
-    for (let i = 0; i < clipboardData.items.length; i++) {
-      const item = clipboardData.items[i];
-      if (item.type.startsWith("image/")) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        if (file) {
-          processImageFile(file);
+    if (!clipboardData) return;
+    if (clipboardData.items) {
+      for (let i = 0; i < clipboardData.items.length; i++) {
+        const item = clipboardData.items[i];
+        if (item.type.startsWith("image/")) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) {
+            processImageFile(file);
+          }
+          return;
         }
-        break;
+      }
+    }
+    const tableMarkdown = convertClipboardTableToMarkdown(clipboardData);
+    if (tableMarkdown) {
+      e.preventDefault();
+      if (textareaRef.current) {
+        const start = textareaRef.current.selectionStart || content.length;
+        const end = textareaRef.current.selectionEnd || content.length;
+        const newContent = content.substring(0, start) + tableMarkdown + content.substring(end);
+        setContent(newContent);
+      } else {
+        setContent((prev) => prev + tableMarkdown);
       }
     }
   };
@@ -673,7 +889,7 @@ ${shortcode}
     setSubmitting(false);
     onClose();
   };
-  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/80 flex items-center justify-center z-[70] p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
+  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/80 flex items-center justify-center z-[70] p-4 md:p-6 backdrop-blur-sm overflow-y-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl lg:max-w-5xl w-full p-6 md:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto", children: [
     /* @__PURE__ */ jsx(
       "button",
       {
@@ -682,12 +898,40 @@ ${shortcode}
           onClose();
         },
         className: "absolute top-5 right-5 text-slate-400 hover:text-white transition-colors",
-        children: /* @__PURE__ */ jsx(X, { size: 20 })
+        children: /* @__PURE__ */ jsx(X, { size: 22 })
       }
     ),
-    /* @__PURE__ */ jsxs("h3", { className: "text-2xl font-bold text-white mb-6 flex items-center gap-2", children: [
-      /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 24 }),
-      "게시글 수정하기"
+    /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-slate-700/60 pb-4", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 28 }),
+        "게시글 수정하기"
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/80", children: [
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setActiveTab("write"),
+            className: `flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === "write" ? "bg-brand-accent text-white shadow-md" : "text-slate-400 hover:text-white"}`,
+            children: [
+              /* @__PURE__ */ jsx(FileText, { size: 14 }),
+              " 작성하기"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setActiveTab("preview"),
+            className: `flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === "preview" ? "bg-brand-accent text-white shadow-md" : "text-slate-400 hover:text-white"}`,
+            children: [
+              /* @__PURE__ */ jsx(Eye, { size: 14 }),
+              " 👁️ 실시간 표/완성 미리보기"
+            ]
+          }
+        )
+      ] })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-5", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -699,16 +943,16 @@ ${shortcode}
             placeholder: "제목을 입력하세요",
             value: title,
             onChange: (e) => setTitle(e.target.value),
-            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
+            className: "w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl text-base text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
             maxLength: 100
           }
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-1.5", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
           /* @__PURE__ */ jsxs("label", { className: "block text-xs font-semibold text-slate-400", children: [
-            "내용 ",
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] text-brand-highlight font-normal ml-2", children: "💡 캡처 후 Ctrl+V 로 바로 이미지 붙여넣기 가능!" })
+            "본문 내용 ",
+            /* @__PURE__ */ jsx("span", { className: "text-[11px] text-brand-highlight font-normal ml-2", children: "💡 워드/엑셀 표 복사나 캡처 이미지 Ctrl+V 로 바로 붙여넣기 가능!" })
           ] }),
           /* @__PURE__ */ jsx(
             "button",
@@ -719,12 +963,12 @@ ${shortcode}
                 return (_a = fileInputRef.current) == null ? void 0 : _a.click();
               },
               disabled: uploadingImage,
-              className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
+              className: "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
               children: uploadingImage ? /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx(Loader2, { size: 14, className: "animate-spin text-brand-accent" }),
+                /* @__PURE__ */ jsx(Loader2, { size: 15, className: "animate-spin text-brand-accent" }),
                 "이미지 읽는 중..."
               ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx(Image, { size: 14, className: "text-brand-accent" }),
+                /* @__PURE__ */ jsx(Image, { size: 15, className: "text-brand-accent" }),
                 "🖼️ 이미지 추가 첨부"
               ] })
             }
@@ -740,23 +984,44 @@ ${shortcode}
             }
           )
         ] }),
-        /* @__PURE__ */ jsx(
+        activeTab === "write" ? /* @__PURE__ */ jsx(
           "textarea",
           {
             ref: textareaRef,
-            rows: 8,
+            rows: 14,
             onPaste: handlePaste,
-            placeholder: "수정할 본문 내용을 입력하세요.",
+            placeholder: "수정할 본문 내용을 입력하세요. MS 워드/한글/엑셀 표를 복사해서 [Ctrl+V]를 누르면 깨짐 없이 파이프(|) 기호가 수직으로 정갈하게 맞춰집니다.",
             value: content,
             onChange: (e) => setContent(e.target.value),
-            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none leading-relaxed font-mono text-xs sm:text-sm"
+            className: "w-full p-4 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-y leading-relaxed font-mono min-h-[380px] whitespace-pre"
           }
-        )
+        ) : /* @__PURE__ */ jsxs("div", { className: "w-full p-6 bg-slate-900 border border-slate-700 rounded-xl min-h-[380px] max-h-[500px] overflow-y-auto", children: [
+          /* @__PURE__ */ jsxs("div", { className: "text-xs text-brand-highlight font-extrabold mb-3 flex items-center gap-1 border-b border-slate-800 pb-2", children: [
+            /* @__PURE__ */ jsx(Eye, { size: 14 }),
+            " 👁️ 게시글 완성 실시간 표/본문 모습 미리보기"
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto", children: /* @__PURE__ */ jsx(
+            ReactMarkdown,
+            {
+              remarkPlugins: [remarkGfm],
+              urlTransform: (url) => url,
+              components: {
+                table: ({ node, ...props }) => /* @__PURE__ */ jsx("div", { className: "overflow-x-auto my-4 rounded-xl border border-slate-700/60 shadow-xl bg-slate-800/40", children: /* @__PURE__ */ jsx("table", { className: "min-w-full divide-y divide-slate-700/60 text-left text-sm", ...props }) }),
+                thead: ({ node, ...props }) => /* @__PURE__ */ jsx("thead", { className: "bg-slate-800/90 text-brand-highlight font-extrabold text-xs tracking-wider border-b border-slate-700", ...props }),
+                tbody: ({ node, ...props }) => /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-slate-700/50 bg-slate-900/30", ...props }),
+                tr: ({ node, ...props }) => /* @__PURE__ */ jsx("tr", { className: "hover:bg-slate-700/30 transition-colors", ...props }),
+                th: ({ node, ...props }) => /* @__PURE__ */ jsx("th", { className: "px-4 py-3 font-bold text-slate-200 border-r border-slate-700/40 last:border-r-0", ...props }),
+                td: ({ node, ...props }) => /* @__PURE__ */ jsx("td", { className: "px-4 py-3 text-slate-300 border-r border-slate-700/30 last:border-r-0 leading-normal", ...props })
+              },
+              children: content ? content : "*아직 작성된 내용이 없습니다.*"
+            }
+          ) })
+        ] })
       ] }),
       errorMsg && /* @__PURE__ */ jsx("p", { className: "text-xs font-semibold text-red-400 text-right", children: errorMsg }),
       /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-end items-center gap-3 pt-2", children: [
         /* @__PURE__ */ jsxs("div", { className: "relative w-full sm:w-60", children: [
-          /* @__PURE__ */ jsx(Lock, { className: "absolute left-3 top-2.5 h-4 w-4 text-slate-500" }),
+          /* @__PURE__ */ jsx(Lock, { className: "absolute left-3.5 top-3 h-4 w-4 text-slate-500" }),
           /* @__PURE__ */ jsx(
             "input",
             {
@@ -767,7 +1032,7 @@ ${shortcode}
                 setPassword(e.target.value);
                 if (errorMsg) setErrorMsg("");
               },
-              className: "w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent",
+              className: "w-full pl-10 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent",
               maxLength: 20
             }
           )
@@ -781,7 +1046,7 @@ ${shortcode}
                 imageMapRef.current = {};
                 onClose();
               },
-              className: "px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs sm:text-sm rounded-lg transition-colors font-medium",
+              className: "px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs sm:text-sm rounded-xl transition-colors font-medium",
               children: "취소"
             }
           ),
@@ -790,7 +1055,7 @@ ${shortcode}
             {
               type: "submit",
               disabled: submitting || uploadingImage,
-              className: "px-5 py-2 bg-brand-accent hover:bg-brand-highlight text-white text-xs sm:text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30 whitespace-nowrap",
+              className: "px-6 py-2.5 bg-brand-accent hover:bg-brand-highlight text-white text-xs sm:text-sm font-extrabold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30 whitespace-nowrap",
               children: [
                 /* @__PURE__ */ jsx(Check, { size: 16 }),
                 "수정 완료"
@@ -1452,7 +1717,7 @@ function DevLogList() {
         }
       }
     ),
-    selectedPost && /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
+    selectedPost && /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 md:p-6 backdrop-blur-sm overflow-y-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl lg:max-w-5xl w-full p-6 md:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600", children: [
       /* @__PURE__ */ jsx(
         "button",
         {
@@ -1511,11 +1776,18 @@ function DevLogList() {
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40 prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto", children: /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsx("div", { className: "prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-8 bg-slate-900/60 p-5 rounded-xl border border-slate-700/50 prose-img:rounded-xl prose-img:max-h-[600px] prose-img:mx-auto max-h-[65vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 shadow-inner", children: /* @__PURE__ */ jsx(
         ReactMarkdown,
         {
+          remarkPlugins: [remarkGfm],
           urlTransform: (url) => url,
           components: {
+            table: ({ node, ...props }) => /* @__PURE__ */ jsx("div", { className: "overflow-x-auto my-6 rounded-xl border border-slate-700/60 shadow-xl bg-slate-800/40", children: /* @__PURE__ */ jsx("table", { className: "min-w-full divide-y divide-slate-700/60 text-left text-sm", ...props }) }),
+            thead: ({ node, ...props }) => /* @__PURE__ */ jsx("thead", { className: "bg-slate-800/90 text-brand-highlight font-extrabold text-xs tracking-wider border-b border-slate-700", ...props }),
+            tbody: ({ node, ...props }) => /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-slate-700/50 bg-slate-900/30", ...props }),
+            tr: ({ node, ...props }) => /* @__PURE__ */ jsx("tr", { className: "hover:bg-slate-700/30 transition-colors", ...props }),
+            th: ({ node, ...props }) => /* @__PURE__ */ jsx("th", { className: "px-4 py-3 font-bold text-slate-200 border-r border-slate-700/40 last:border-r-0", ...props }),
+            td: ({ node, ...props }) => /* @__PURE__ */ jsx("td", { className: "px-4 py-3 text-slate-300 border-r border-slate-700/30 last:border-r-0 leading-normal", ...props }),
             a: ({ node, href, children, ...props }) => /* @__PURE__ */ jsx(
               "a",
               {
