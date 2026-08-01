@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- In-App Browser Escape Script -->
+    <script>
+        (function () {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.match(/kakaotalk/i)) {
+                var url = location.href;
+                // Android
+                if (userAgent.match(/android/i)) {
+                    location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                }
+                // iOS
+                else if (userAgent.match(/iphone|ipad|ipod/i)) {
+                    // KakaoTalk cache server bypass trick for iOS isn't reliable anymore.
+                    // The standard approach is to show an overlay guiding the user to Safari.
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var overlay = document.createElement('div');
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100vw';
+                        overlay.style.height = '100vh';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+                        overlay.style.color = 'white';
+                        overlay.style.zIndex = '999999';
+                        overlay.style.display = 'flex';
+                        overlay.style.flexDirection = 'column';
+                        overlay.style.alignItems = 'center';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.textAlign = 'center';
+                        overlay.style.padding = '20px';
+                        overlay.innerHTML = `
+                            <div style="font-size: 24px; margin-bottom: 20px;">⚠️ 브라우저 호환성 안내</div>
+                            <div style="font-size: 16px; line-height: 1.5; margin-bottom: 30px;">
+                                원활한 게임 플레이와 소리 재생을 위해<br />
+                                기본 브라우저(Safari 또는 Chrome)를 사용해주세요.
+                            </div>
+                            <div style="background: #333; padding: 15px; border-radius: 10px; font-size: 14px;">
+                                화면 우측 하단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span> 또는 <br/>
+                                상단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span>을 누른 뒤<br/>
+                                <strong>'다른 브라우저로 열기'</strong>를 선택해주세요.
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+                    });
+                }
+            }
+        })();
+    </script>
+    <meta name="google-adsense-account" content="ca-pub-3130573171479694">
+    <meta name="description"
+        content="IT 정보, 개발 지식, 코딩, AI 지식을 의미있게 - ant@IT" />
+    <meta name="keywords"
+        content="IT 정보, 코딩, AI, 개발 지식, IT 기술, 무료 게임, HTML5 games, ant@IT" />
+    <meta property="og:title" content="ant@IT - IT 정보, 지식, 코딩 & AI" />
+    <meta property="og:description"
+        content="IT 정보, 개발 지식, 코딩, AI 지식을 의미있게 - ant@IT" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gameant.pages.dev" />
+    <meta property="og:image" content="https://placehold.co/1200x630/1e293b/white?text=ant%40IT" />
+    <title>ant@IT - IT 정보, 지식, 코딩 & AI</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3130573171479694"
+        crossorigin="anonymous"></script>
+  <script type="module" crossorigin src="/assets/index-C860GZPl.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B4obLgr_.css">
+</head>
+
+<body class="bg-gray-900 text-white">
+    <div id="root"><div class="min-h-screen bg-slate-900 text-white font-sans selection:bg-brand-accent selection:text-white py-12 px-6 lg:px-8"><div class="max-w-3xl mx-auto"><a class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-brand-accent transition-colors mb-8 group" href="/" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left mr-2 transform group-hover:-translate-x-1 transition-transform"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Back to IT Log List</a><article class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 md:p-10 shadow-2xl backdrop-blur-sm"><header class="mb-10 text-center border-b border-slate-700/50 pb-8"><h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-white mb-6 leading-tight">바이브코딩으로 게임 만들기 - 솔직한 현직 개발자 후기</h1><div class="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400"><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-brand-accent"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>NolGaeMi</span></div><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye text-brand-accent"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg><span>15<!-- --> 회 읽음</span></div><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar text-brand-accent"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg><span>2026-03-06</span></div></div></header><div class="prose prose-invert prose-slate max-w-none prose-a:text-brand-accent hover:prose-a:text-brand-highlight prose-img:rounded-xl"><h1>바이브코딩으로 게임 만들기</h1>
+<p>바이브코딩으로 게임을 만들때는 딱 한가지를 기억해야 한다!</p>
+<p>만들려는 게임이 됐건 무엇이 됐건 간에 어떤 플랫폼 혹은 어떤 워크프레임을 쓸것인지 대략은 알고 있어야 한다는 것이다.</p>
+<p>가령 크로스플랫폼 게임을 만들려면, HTML, CSS, JavaScript를 사용해야 한다는 것을 알고 있어야 한다. 왜 HTML이 크로스플랫폼에 적합할까? 그것은 HTML이 브라우저가 이해할 수 있는 언어이기 때문이다. 브라우저는 우리가 인터넷을 볼때, 핸드폰이 됐건, 데스트톱이 됐건, 노트북이 됐건 무조건 설치되어있던지 혹은 설치 할 수 있다. 항상 쓰는 에지, 크롬, 사파리 등이 그것이다. 다시 말해 어디나 있어서 크로스플랫폼이다.</p>
+<p>참고로 크로스프랫폼은 웹, 앱, 데스크탑 등 다양한 플랫폼에서 동작하는 앱을 만들 수 있는 기술이다. 핸드폰이건, 태블릿이건, 컴퓨터이건 상관없이 동작하는 앱을 만들 수 있다는 것이다.</p>
+<p>자 그럼 만약, 위의 내용, 즉 큰그림을 모르고 바이브 코딩을 한다면 어떻게 될까? 만약 운이 좋다면, 아니면 아주 비싸고 좋은 A.I를 쓴다면 위의 내용을 모른다고 해도 아마 잘 만들어 줄것이다. 하지만, 일반적으로 우리가 쓰는 chatGPT, Gemini, Claude 등은, 아직은 실수를 한다. 때로는 전혀 다른 기술을 전혀 다른 장치에 사용해서 엉뚱한 결과를 내놓는다. 가령, 우리같은 사용자가 위의 내용을 모른체 요구 했다가는 &quot;수정과 디버깅&quot;의 늪에 빠지게 될것이다.</p>
+<p>하지만 걱정하지 말자. 우리가 여기서 하려는 것이 바로 그것이니까! 실전에서 알게된 쉽고 빠른 바이브 코딩 비법.</p>
+<p>행운을 빈니다! 홧팅😄</p>
+<h2>어떤걸 알게 되냐면,</h2>
+<ul>
+<li><strong>큰 그림</strong>: 어떤 플랫폼, 혹은 워크프레임을 쓸것인지 개념 잡기.</li>
+<li><strong>밑바탕 이해하기</strong>: 간단한 HTML, 파이썬, 자바스크립트 정도의 문법 이해하기</li>
+<li><strong>유용한 팁</strong>:  실전에서 알게된 유용한 팁</li>
+</ul>
+<p>연락하기 : WeListenToCustomer@gmail.com</p></div><section class="mt-12 border-t border-slate-700/60 pt-10"><h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square text-brand-accent"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>댓글 (<!-- -->0<!-- -->)</h3><form class="bg-slate-800/60 rounded-2xl border border-slate-700/60 p-5 mb-8 shadow-lg"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"><div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user absolute left-3 top-3 h-4 w-4 text-slate-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><input type="text" placeholder="닉네임" class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent" maxLength="20" value=""/></div><div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock absolute left-3 top-3 h-4 w-4 text-slate-500"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><input type="password" placeholder="비밀번호 (수정/삭제용)" class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent" maxLength="20" value=""/></div></div><div class="mb-4"><textarea rows="3" placeholder="타인을 배려하는 따뜻한 댓글을 남겨주세요." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none"></textarea></div><div class="flex justify-end"><button type="submit" class="bg-brand-accent hover:bg-brand-highlight text-white font-bold py-2 px-6 rounded-lg text-sm flex items-center gap-2 transition-all shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>댓글 등록</button></div></form><div class="space-y-4"><div class="text-center py-8 text-slate-500 text-sm">아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!</div></div></section></article></div></div></div>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "db6a9bc74392456ea7ed5f58ef839b46"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+
+</html>

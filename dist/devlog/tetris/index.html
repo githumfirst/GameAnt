@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- In-App Browser Escape Script -->
+    <script>
+        (function () {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.match(/kakaotalk/i)) {
+                var url = location.href;
+                // Android
+                if (userAgent.match(/android/i)) {
+                    location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                }
+                // iOS
+                else if (userAgent.match(/iphone|ipad|ipod/i)) {
+                    // KakaoTalk cache server bypass trick for iOS isn't reliable anymore.
+                    // The standard approach is to show an overlay guiding the user to Safari.
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var overlay = document.createElement('div');
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100vw';
+                        overlay.style.height = '100vh';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+                        overlay.style.color = 'white';
+                        overlay.style.zIndex = '999999';
+                        overlay.style.display = 'flex';
+                        overlay.style.flexDirection = 'column';
+                        overlay.style.alignItems = 'center';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.textAlign = 'center';
+                        overlay.style.padding = '20px';
+                        overlay.innerHTML = `
+                            <div style="font-size: 24px; margin-bottom: 20px;">⚠️ 브라우저 호환성 안내</div>
+                            <div style="font-size: 16px; line-height: 1.5; margin-bottom: 30px;">
+                                원활한 게임 플레이와 소리 재생을 위해<br />
+                                기본 브라우저(Safari 또는 Chrome)를 사용해주세요.
+                            </div>
+                            <div style="background: #333; padding: 15px; border-radius: 10px; font-size: 14px;">
+                                화면 우측 하단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span> 또는 <br/>
+                                상단의 <span style="color: #4CAF50;">[ ⠇] 버튼</span>을 누른 뒤<br/>
+                                <strong>'다른 브라우저로 열기'</strong>를 선택해주세요.
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+                    });
+                }
+            }
+        })();
+    </script>
+    <meta name="google-adsense-account" content="ca-pub-3130573171479694">
+    <meta name="description"
+        content="IT 정보, 개발 지식, 코딩, AI 지식을 의미있게 - ant@IT" />
+    <meta name="keywords"
+        content="IT 정보, 코딩, AI, 개발 지식, IT 기술, 무료 게임, HTML5 games, ant@IT" />
+    <meta property="og:title" content="ant@IT - IT 정보, 지식, 코딩 & AI" />
+    <meta property="og:description"
+        content="IT 정보, 개발 지식, 코딩, AI 지식을 의미있게 - ant@IT" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gameant.pages.dev" />
+    <meta property="og:image" content="https://placehold.co/1200x630/1e293b/white?text=ant%40IT" />
+    <title>ant@IT - IT 정보, 지식, 코딩 & AI</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3130573171479694"
+        crossorigin="anonymous"></script>
+  <script type="module" crossorigin src="/assets/index-C860GZPl.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B4obLgr_.css">
+</head>
+
+<body class="bg-gray-900 text-white">
+    <div id="root"><div class="min-h-screen bg-slate-900 text-white font-sans selection:bg-brand-accent selection:text-white py-12 px-6 lg:px-8"><div class="max-w-3xl mx-auto"><a class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-brand-accent transition-colors mb-8 group" href="/" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left mr-2 transform group-hover:-translate-x-1 transition-transform"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Back to IT Log List</a><article class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 md:p-10 shadow-2xl backdrop-blur-sm"><header class="mb-10 text-center border-b border-slate-700/50 pb-8"><h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-white mb-6 leading-tight">Tetris3D: 공간의 한계를 넘는 코드 여행</h1><div class="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400"><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-brand-accent"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>임페리얼 파파</span></div><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye text-brand-accent"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg><span>15<!-- --> 회 읽음</span></div><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar text-brand-accent"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg><span>2026-03-06</span></div></div></header><div class="prose prose-invert prose-slate max-w-none prose-a:text-brand-accent hover:prose-a:text-brand-highlight prose-img:rounded-xl"><blockquote>
+<p><em>평면의 테트리스는 이미 충분히 어렵다. 그런데 거기에 축을 하나 더 추가하면 어떻게 될까?</em></p>
+</blockquote>
+<hr/>
+<h2>시작하며</h2>
+<p>2D 테트리스는 수십 년간 사랑받아온 고전이지만, 항상 한 가지 의문이 있었습니다.</p>
+<p><strong>&quot;Z축이 생기면 얼마나 더 어려워질까?&quot;</strong></p>
+<p>그 답을 코드로 직접 구현한 것이 <strong>Tetris3D</strong>입니다. 블록이 X, Y뿐 아니라 Z축으로도 회전하고, 3D 공간에서의 거리감과 입체감을 실시간으로 파악하며 쌓아야 합니다. 이 devlog는 그 개발 과정에서 마주친 기술적 선택들과 앞으로의 방향을 기록한 것입니다.</p>
+<hr/>
+<h2>⚙️ 기술 스택: 왜 Three.js인가?</h2>
+<p>웹 브라우저에서 3D 게임을 만들 때 가장 먼저 마주치는 선택지는 <strong>WebGL</strong>입니다. 강력하지만, 직접 다루려면 셰이더(Shader) 작성과 복잡한 행렬 연산이 필수라 진입 장벽이 높습니다.</p>
+<p><strong><a href="https://threejs.org/">Three.js</a></strong> 는 이 복잡함을 직관적인 객체 지향 API로 감싸줍니다. 덕분에 &quot;어떤 블록을 어디에 놓을지&quot;라는 <strong>게임 로직</strong>에 집중할 수 있었습니다.</p>
+<h3>Three.js의 세계관 이해하기</h3>
+<pre><code>Scene    →  모든 물체가 배치되는 &#x27;우주 공간&#x27;
+Camera   →  우리가 보는 시점 (PerspectiveCamera: 원근감 구현)
+Renderer →  Scene + Camera 정보를 실제 픽셀로 그려주는 엔진
+</code></pre>
+<p>HTML의 <code>&lt;canvas&gt;</code> 위에서 정점(Vertex)들을 정의하고, 이를 수학적으로 투영(Projection)하는 과정 전체를 Three.js가 대신 처리해 줍니다.</p>
+<h3>핵심 최적화: <code>InstancedMesh</code></h3>
+<p>이 프로젝트에서 가장 중요한 성능 결정은 <strong>InstancedMesh</strong> 사용이었습니다.</p>
+<p>| 방식 | 특징 |
+|------|------|
+| 개별 Mesh | 블록마다 별도 드로우 콜 → 블록 수 증가 시 프레임 드롭 |
+| <strong>InstancedMesh</strong> | <strong>단 한 번의 드로우 콜로 수백 개 블록 렌더링</strong> |</p>
+<p>결과적으로 모바일에서도 안정적인 <strong>60fps</strong>를 유지할 수 있었습니다.</p>
+<hr/>
+<h2>🎮 게임플레이: 3차원이 주는 두뇌 자극</h2>
+<p>단순히 &quot;테트리스를 3D로&quot;가 아니라, <strong>공간 지각 능력을 게임의 핵심 재미로</strong> 삼았습니다.</p>
+<h3>다차원 로테이션</h3>
+<p>X, Y, Z 세 축으로 블록을 회전시키며 맞춰야 합니다. 기존 테트리스보다 훨씬 높은 전략적 사고가 요구되며, 처음 3D 회전을 &quot;이해하는 순간&quot;의 쾌감이 이 게임의 가장 큰 보상입니다.</p>
+<h3>Ghost Piece 시스템</h3>
+<p>3D 공간에서 거리감을 파악하는 것은 생각보다 어렵습니다. <strong>유령 블록(Ghost Piece)</strong> 은 블록이 떨어질 위치를 미리 보여주어 이 불편함을 자연스럽게 해소합니다.</p>
+<h3>절차적 사운드 (Procedural Audio)</h3>
+<p>고정된 <code>.mp3</code> 파일 대신 <strong>Web Audio API (<code>AudioContext</code>)</strong> 를 이용해 효과음을 실시간 생성합니다.</p>
+<ul>
+<li>✅ 파일 용량 절감</li>
+<li>✅ 상황에 따른 즉각적인 반응성</li>
+<li>✅ 네트워크 없이도 완전한 사운드 경험</li>
+</ul>
+<hr/>
+<h2>🔧 개선이 필요한 것들</h2>
+<p>솔직하게 현재 버전의 한계를 짚어봅니다.</p>
+<h3>1. 데스크탑 키 가이드 부재</h3>
+<p>현재 코드(Line ~1200)의 키 매핑은 다음과 같습니다:</p>
+<pre><code>Q  →  X축 회전
+W  →  Y축 회전  
+E  →  Z축 회전
+A / D  →  카메라 궤도 회전
+</code></pre>
+<p>모바일은 버튼이 UI에 표시되어 있어 직관적이지만, <strong>데스크탑 사용자는 이 키 매핑을 알 방법이 없습니다.</strong> 처음 접하는 유저는 대부분 방향키만 눌러보다가 이탈할 것입니다.</p>
+<p><strong>→ 개선 방향:</strong> 화면 하단에 키 가이드 오버레이 추가, 또는 더 직관적인 키(숫자패드, <code>R/T/Y</code> 등)로 리매핑</p>
+<hr/>
+<h3>2. 코드 모듈화 (가장 시급한 기술 부채)</h3>
+<p>현재 상태: <strong>약 1,400줄의 코드가 <code>index.html</code> 한 파일에 집중</strong></p>
+<p>초기 프로토타이핑엔 유리하지만, 이대로 기능을 추가하면 유지보수 불가능한 스파게티 코드가 됩니다.</p>
+<pre><code>현재:  index.html (1,400+ lines)
+
+목표 구조:
+├── styles.css       → 스타일 분리
+├── Renderer.js      → Three.js 설정 및 렌더링 로직
+├── Logic.js         → 테트리스 알고리즘 (충돌 체크, 줄 삭제)
+└── Audio.js         → 사운드 및 BGM 시스템
+</code></pre>
+<hr/>
+<h2>🗺️ 로드맵</h2>
+<ul>
+<li>[ ] 데스크탑 키 가이드 UI 추가</li>
+<li>[ ] 코드 모듈화 (파일 분리 리팩토링)</li>
+<li>[ ] 실시간 멀티플레이어 모드 검토</li>
+</ul>
+<hr/>
+<h2>마치며</h2>
+<p>3D 게임 개발이라고 하면 막연히 어렵게 느껴지지만, Three.js와 같은 훌륭한 라이브러리 덕분에 생각보다 빠르게 프로토타입을 만들 수 있었습니다. 이 글이 웹 기반 3D 게임 개발에 관심 있는 분들께 작은 출발점이 되길 바랍니다.</p>
+<p>코드는 언제나 개선 중입니다. 피드백과 PR은 언제든 환영합니다! 🙌</p>
+<hr/>
+<p><em>made with Three.js · Web Audio API · vanilla JavaScript</em></p></div><section class="mt-12 border-t border-slate-700/60 pt-10"><h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square text-brand-accent"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>댓글 (<!-- -->0<!-- -->)</h3><form class="bg-slate-800/60 rounded-2xl border border-slate-700/60 p-5 mb-8 shadow-lg"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"><div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user absolute left-3 top-3 h-4 w-4 text-slate-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><input type="text" placeholder="닉네임" class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent" maxLength="20" value=""/></div><div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock absolute left-3 top-3 h-4 w-4 text-slate-500"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><input type="password" placeholder="비밀번호 (수정/삭제용)" class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent" maxLength="20" value=""/></div></div><div class="mb-4"><textarea rows="3" placeholder="타인을 배려하는 따뜻한 댓글을 남겨주세요." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none"></textarea></div><div class="flex justify-end"><button type="submit" class="bg-brand-accent hover:bg-brand-highlight text-white font-bold py-2 px-6 rounded-lg text-sm flex items-center gap-2 transition-all shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>댓글 등록</button></div></form><div class="space-y-4"><div class="text-center py-8 text-slate-500 text-sm">아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!</div></div></section></article></div></div></div>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "db6a9bc74392456ea7ed5f58ef839b46"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+
+</html>

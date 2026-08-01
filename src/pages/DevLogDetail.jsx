@@ -1,67 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ArrowLeft, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Eye } from 'lucide-react';
+import CommentSection from '../components/CommentSection';
+
+const rawMarkdownFiles = import.meta.glob('../content/devlog/*.md', { query: '?raw', import: 'default', eager: true });
+
+function getViewCount(slug) {
+    try {
+        const local = localStorage.getItem(`views_article-${slug}`);
+        if (local) return parseInt(local, 10) || 15;
+    } catch (e) { }
+    return 15;
+}
+
+function incrementViewCount(slug) {
+    const current = getViewCount(slug);
+    const newViews = current + 1;
+    try {
+        localStorage.setItem(`views_article-${slug}`, newViews.toString());
+    } catch (e) { }
+    return newViews;
+}
+
+function getPostBySlug(slug) {
+    if (!slug) return null;
+    const decodedSlug = decodeURIComponent(slug);
+    const targetPath = `../content/devlog/${decodedSlug}.md`;
+    const content = rawMarkdownFiles[targetPath];
+
+    if (!content || typeof content !== 'string') return null;
+
+    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+    const match = content.match(frontmatterRegex);
+
+    let data = {};
+    let markdownContent = content;
+
+    if (match) {
+        const yamlString = match[1];
+        markdownContent = match[2];
+
+        yamlString.split('\n').forEach(line => {
+            const [key, ...valueParts] = line.split(':');
+            if (key && valueParts.length > 0) {
+                let val = valueParts.join(':').trim();
+                val = val.replace(/^["'](.*)["']$/, '$1');
+                data[key.trim()] = val;
+            }
+        });
+    }
+
+    return {
+        title: data.title || 'Untitled',
+        writer: data.writer || 'Anonymous',
+        date: data.date || 'Unknown Date',
+        content: markdownContent,
+        views: getViewCount(slug)
+    };
+}
 
 function DevLogDetail() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const [post, setPost] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const [post, setPost] = useState(() => getPostBySlug(slug));
+    const [loading, setLoading] = useState(!post);
+    const [error, setError] = useState(!post);
 
     useEffect(() => {
-        const fetchPost = async () => {
-            setLoading(true);
-            try {
-                // Read all markdown files
-                const markdownFiles = import.meta.glob('../content/devlog/*.md', { query: '?raw', import: 'default' });
-
-                const decodedSlug = decodeURIComponent(slug);
-                const targetPath = `../content/devlog/${decodedSlug}.md`;
-
-                if (markdownFiles[targetPath]) {
-                    const content = await markdownFiles[targetPath]();
-
-                    // Simple custom frontmatter parser
-                    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-                    const match = content.match(frontmatterRegex);
-
-                    let data = {};
-                    let markdownContent = content;
-
-                    if (match) {
-                        const yamlString = match[1];
-                        markdownContent = match[2];
-
-                        yamlString.split('\n').forEach(line => {
-                            const [key, ...valueParts] = line.split(':');
-                            if (key && valueParts.length > 0) {
-                                let val = valueParts.join(':').trim();
-                                val = val.replace(/^["'](.*)["']$/, '$1');
-                                data[key.trim()] = val;
-                            }
-                        });
-                    }
-
-                    setPost({
-                        title: data.title || 'Untitled',
-                        writer: data.writer || 'Anonymous',
-                        date: data.date || 'Unknown Date',
-                        content: markdownContent
-                    });
-                } else {
-                    setError(true);
-                }
-            } catch (err) {
-                console.error("Error loading devlog detail:", err);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPost();
+        const fetched = getPostBySlug(slug);
+        if (fetched) {
+            const newViews = incrementViewCount(slug);
+            setPost({ ...fetched, views: newViews });
+            setError(false);
+        } else {
+            setError(true);
+        }
+        setLoading(false);
     }, [slug]);
 
     if (loading) {
@@ -90,9 +105,9 @@ function DevLogDetail() {
     return (
         <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-brand-accent selection:text-white py-12 px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
-                <Link to="/devlog" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-brand-accent transition-colors mb-8 group">
+                <Link to="/" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-brand-accent transition-colors mb-8 group">
                     <ArrowLeft size={16} className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
-                    Back to DevLog List
+                    Back to IT Log List
                 </Link>
 
                 <article className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
@@ -106,6 +121,10 @@ function DevLogDetail() {
                                 <span>{post.writer}</span>
                             </div>
                             <div className="flex items-center gap-2">
+                                <Eye size={16} className="text-brand-accent" />
+                                <span>{post.views || 1} 회 읽음</span>
+                            </div>
+                            <div className="flex items-center gap-2">
                                 <Calendar size={16} className="text-brand-accent" />
                                 <span>{post.date}</span>
                             </div>
@@ -117,6 +136,9 @@ function DevLogDetail() {
                             {post.content}
                         </ReactMarkdown>
                     </div>
+
+                    {/* Real-time Comment Section for Article */}
+                    <CommentSection postId={`article-${slug}`} />
                 </article>
             </div>
         </div>
