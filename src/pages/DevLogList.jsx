@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronLeft, ChevronRight, FileText, PenTool, MessageSquare, Sparkles, X, Trash2, Eye } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, FileText, PenTool, MessageSquare, Sparkles, X, Trash2, Eye, Edit3 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import BoardWriteModal from '../components/BoardWriteModal';
+import BoardEditModal from '../components/BoardEditModal';
 import CommentSection from '../components/CommentSection';
 
 const rawMarkdownFiles = import.meta.glob('../content/devlog/*.md', { query: '?raw', import: 'default', eager: true });
@@ -29,6 +31,27 @@ function getCommentCount(post) {
         } catch (e) { }
     }
     return post.comment_count || 0;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return new Date().toISOString().substring(0, 10);
+    const s = String(dateStr).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+    const matches = s.match(/\d+/g);
+    if (matches && matches.length >= 3) {
+        const y = matches[0];
+        const m = matches[1].padStart(2, '0');
+        const d = matches[2].padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+    if (matches && matches.length === 2) {
+        const y = matches[0];
+        const m = matches[1].padStart(2, '0');
+        const todayD = new Date().getDate().toString().padStart(2, '0');
+        return `${y}-${m}-${todayD}`;
+    }
+    return s.substring(0, 10);
 }
 
 function getViewCount(postId, defaultViews = 15) {
@@ -103,6 +126,7 @@ function DevLogList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ open: false, postId: null, password: '' });
     const [deleteError, setDeleteError] = useState('');
@@ -245,8 +269,25 @@ function DevLogList() {
         setDeleteError('');
     };
 
-    // Combine preserved articles + community posts in one unified list
-    const allUnifiedPosts = [...staticPosts, ...communityPosts];
+    // Combine preserved articles + community posts in one unified list (Latest First)
+    const parseDateScore = (post) => {
+        if (!post) return 0;
+        if (!post.isSSG && post.rawId) {
+            const numericId = Number(post.rawId);
+            if (!isNaN(numericId) && numericId > 10000000) {
+                return numericId; // Timestamp ID
+            }
+        }
+        const cleanDate = String(post.date || '').replace(/\./g, '-').replace(/\s+/g, '').replace(/-+$/, '');
+        const timestamp = new Date(cleanDate).getTime();
+        return isNaN(timestamp) ? 0 : timestamp;
+    };
+
+    const allUnifiedPosts = [...communityPosts, ...staticPosts].sort((a, b) => {
+        const scoreA = parseDateScore(a);
+        const scoreB = parseDateScore(b);
+        return scoreB - scoreA;
+    });
 
     const filteredPosts = allUnifiedPosts.filter(post =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -372,8 +413,8 @@ function DevLogList() {
                                                         {post.views || 1}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
-                                                    {post.date}
+                                                <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 font-mono">
+                                                    {formatDate(post.date)}
                                                 </td>
                                             </tr>
                                         );
@@ -438,6 +479,25 @@ function DevLogList() {
                 onPostCreated={handlePostCreated}
             />
 
+            {/* Edit Modal */}
+            <BoardEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                post={selectedPost}
+                onPostUpdated={(updatedPost) => {
+                    setSelectedPost(updatedPost);
+                    setCommunityPosts(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p));
+                    const local = localStorage.getItem('community_posts');
+                    if (local) {
+                        try {
+                            const parsed = JSON.parse(local);
+                            const updatedList = parsed.map(p => p.id === updatedPost.id ? updatedPost : p);
+                            localStorage.setItem('community_posts', JSON.stringify(updatedList));
+                        } catch (e) { }
+                    }
+                }}
+            />
+
             {/* Selected Post Detail Modal */}
             {selectedPost && (
                 <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
@@ -470,20 +530,50 @@ function DevLogList() {
                                 <span className="flex items-center gap-1 text-slate-400"><Eye size={12} /> {selectedPost.views || 1}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span>{selectedPost.date}</span>
+                                <span className="font-mono">{formatDate(selectedPost.date)}</span>
                                 {!selectedPost.isSSG && (
-                                    <button
-                                        onClick={() => setDeleteModal({ open: true, postId: selectedPost.id, password: '' })}
-                                        className="text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1"
-                                    >
-                                        <Trash2 size={12} /> 삭제
-                                    </button>
+                                    <>
+                                        <button
+                                            onClick={() => setIsEditModalOpen(true)}
+                                            className="text-slate-400 hover:text-brand-accent transition-colors flex items-center gap-1 font-semibold"
+                                        >
+                                            <Edit3 size={12} /> 수정
+                                        </button>
+                                        <button
+                                            onClick={() => setDeleteModal({ open: true, postId: selectedPost.id, password: '' })}
+                                            className="text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1"
+                                        >
+                                            <Trash2 size={12} /> 삭제
+                                        </button>
+                                    </>
                                 )}
                             </div>
                         </div>
 
-                        <div className="text-slate-200 text-sm whitespace-pre-wrap leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40">
-                            {selectedPost.content}
+                        <div className="prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40 prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto">
+                            <ReactMarkdown
+                                urlTransform={(url) => url}
+                                components={{
+                                    a: ({ node, href, children, ...props }) => (
+                                        <a
+                                            href={href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                window.open(href, '_blank', 'width=1024,height=800,scrollbars=yes,resizable=yes');
+                                            }}
+                                            className="text-brand-highlight underline hover:text-brand-accent transition-colors font-semibold cursor-pointer"
+                                            title="클릭 시 새 창(사이즈 조절 가능)에서 연결됩니다"
+                                            {...props}
+                                        >
+                                            {children}
+                                        </a>
+                                    )
+                                }}
+                            >
+                                {selectedPost.content ? selectedPost.content.replace(/(^|[\s\n])(https?:\/\/[^\s\n\)<>]+)/g, '$1[$2]($2)') : ''}
+                            </ReactMarkdown>
                         </div>
 
                         {/* Integrated Real-time Comments */}

@@ -35,6 +35,60 @@ export async function onRequestGet(context) {
     }
 }
 
+export async function onRequestPut(context) {
+    const { params, request, env } = context;
+    const postId = params.id;
+
+    try {
+        const body = await request.json();
+        const { title, content, password } = body;
+
+        if (!password || !title || !content) {
+            return new Response(JSON.stringify({ success: false, error: "Title, content and password are required." }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        if (!env || !env.DB) {
+            return new Response(JSON.stringify({ success: true }), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        const existing = await env.DB.prepare(
+            "SELECT password FROM posts WHERE id = ?"
+        ).bind(postId).first();
+
+        if (!existing) {
+            return new Response(JSON.stringify({ success: false, error: "Post not found." }), {
+                status: 404,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        if (existing.password !== password) {
+            return new Response(JSON.stringify({ success: false, error: "Incorrect password." }), {
+                status: 403,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        await env.DB.prepare(
+            "UPDATE posts SET title = ?, content = ? WHERE id = ?"
+        ).bind(title, content, postId).run();
+
+        return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json" }
+        });
+    } catch (err) {
+        return new Response(JSON.stringify({ success: false, error: err.message }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" }
+        });
+    }
+}
+
 export async function onRequestDelete(context) {
     const { params, request, env } = context;
     const postId = params.id;

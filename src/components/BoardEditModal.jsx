@@ -1,20 +1,42 @@
-import React, { useState, useRef } from 'react';
-import { X, User, Lock, Edit3, Check, Image as ImageIcon, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Lock, Edit3, Check, Image as ImageIcon, Loader2 } from 'lucide-react';
 
-function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
+function BoardEditModal({ isOpen, onClose, post, onPostUpdated }) {
     const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [password, setPassword] = useState('');
     const [content, setContent] = useState('');
+    const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const fileInputRef = useRef(null);
     const textareaRef = useRef(null);
     const imageMapRef = useRef({});
 
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (post && post.content) {
+            setTitle(post.title || '');
+            setPassword('');
+            setErrorMsg('');
 
-    // Handle Image File Upload via File Input
+            // Parse existing Base64 images and convert to clean shortcode aliases
+            imageMapRef.current = {};
+            let count = 1;
+            let displayContent = post.content;
+
+            const imageRegex = /!\[.*?\]\((data:image\/[^;]+;base64,[^\)]+)\)/g;
+            displayContent = displayContent.replace(imageRegex, (match, dataUrl) => {
+                const shortcode = `![📷 첨부 이미지 ${count++}]`;
+                imageMapRef.current[shortcode] = dataUrl;
+                return shortcode;
+            });
+
+            setContent(displayContent);
+        }
+    }, [post]);
+
+    if (!isOpen || !post) return null;
+
+    // Handle File Input Selection
     const handleImageUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -81,63 +103,61 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title.trim() || !author.trim() || !password.trim() || !content.trim()) {
-            alert('모든 항목(제목, 닉네임, 비밀번호, 내용)을 입력해 주세요.');
+        if (!title.trim() || !content.trim() || !password.trim()) {
+            setErrorMsg('비밀번호를 입력해 주세요.');
             return;
         }
 
         setSubmitting(true);
+        setErrorMsg('');
 
-        // Replace shortcode aliases with actual Base64 data URLs before submit
+        // Restore shortcodes back to actual full Base64 URLs before update
         let finalContent = content.trim();
         for (const [alias, dataUrl] of Object.entries(imageMapRef.current)) {
             finalContent = finalContent.split(alias).join(`![이미지](${dataUrl})`);
         }
 
-        const newPostObj = {
-            id: Date.now(),
-            title: title.trim(),
-            author: author.trim(),
-            content: finalContent,
-            password: password.trim(),
-            created_at: new Date().toISOString().substring(0, 10)
-        };
+        const rawId = post.rawId || String(post.id).replace(/^community-/, '');
 
         try {
-            const res = await fetch('/api/posts', {
-                method: 'POST',
+            const res = await fetch(`/api/posts/${rawId}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: title.trim(),
-                    author: author.trim(),
                     content: finalContent,
                     password: password.trim()
                 })
             });
-            if (res.ok) {
-                const data = await res.json();
-                if (data.success && data.id) {
-                    newPostObj.id = data.id;
-                }
+
+            if (res.status === 403) {
+                setErrorMsg('비밀번호가 일치하지 않습니다.');
+                setSubmitting(false);
+                return;
             }
         } catch (e) {
-            console.log("Saving post locally");
+            // Local fallback check
+            if (post.password && post.password !== password.trim()) {
+                setErrorMsg('비밀번호가 일치하지 않습니다.');
+                setSubmitting(false);
+                return;
+            }
         }
 
-        onPostCreated(newPostObj);
+        const updatedPost = {
+            ...post,
+            title: title.trim(),
+            content: finalContent
+        };
 
-        // Reset form
-        setTitle('');
-        setAuthor('');
-        setPassword('');
-        setContent('');
+        onPostUpdated(updatedPost);
         imageMapRef.current = {};
         setSubmitting(false);
         onClose();
     };
 
     return (
-        <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
             <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={() => {
@@ -151,7 +171,7 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
 
                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
                     <Edit3 className="text-brand-accent" size={24} />
-                    ant@IT 새 글 작성
+                    게시글 수정하기
                 </h3>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -167,44 +187,12 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-400 mb-1">작성자 (닉네임)</label>
-                            <div className="relative">
-                                <User className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
-                                <input
-                                    type="text"
-                                    placeholder="닉네임"
-                                    value={author}
-                                    onChange={(e) => setAuthor(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
-                                    maxLength={20}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-400 mb-1">비밀번호 (삭제용)</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
-                                <input
-                                    type="password"
-                                    placeholder="비밀번호"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
-                                    maxLength={20}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
                     <div>
                         <div className="flex justify-between items-center mb-1.5">
                             <label className="block text-xs font-semibold text-slate-400">
                                 내용 <span className="text-[10px] text-brand-highlight font-normal ml-2">💡 캡처 후 Ctrl+V 로 바로 이미지 붙여넣기 가능!</span>
                             </label>
 
-                            {/* Image Upload Trigger Button */}
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
@@ -219,7 +207,7 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
                                 ) : (
                                     <>
                                         <ImageIcon size={14} className="text-brand-accent" />
-                                        🖼️ 이미지 첨부
+                                        🖼️ 이미지 추가 첨부
                                     </>
                                 )}
                             </button>
@@ -237,32 +225,54 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
                             ref={textareaRef}
                             rows={8}
                             onPaste={handlePaste}
-                            placeholder="글을 작성해 보세요. [Windows+Shift+S]로 캡처 후 [Ctrl+V]를 누르면 커서 자리에 이미지가 즉시 붙여넣어집니다."
+                            placeholder="수정할 본문 내용을 입력하세요."
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none leading-relaxed font-mono text-xs sm:text-sm"
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-2">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                imageMapRef.current = {};
-                                onClose();
-                            }}
-                            className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded-lg transition-colors font-medium"
-                        >
-                            취소
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={submitting || uploadingImage}
-                            className="px-6 py-2.5 bg-brand-accent hover:bg-brand-highlight text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30"
-                        >
-                            <Check size={18} />
-                            글 등록하기
-                        </button>
+                    {errorMsg && (
+                        <p className="text-xs font-semibold text-red-400 text-right">{errorMsg}</p>
+                    )}
+
+                    {/* Bottom Action Bar with Password Input Right Next to Submit */}
+                    <div className="flex flex-col sm:flex-row justify-end items-center gap-3 pt-2">
+                        <div className="relative w-full sm:w-60">
+                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                            <input
+                                type="password"
+                                placeholder="비밀번호 입력"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    if (errorMsg) setErrorMsg('');
+                                }}
+                                className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                                maxLength={20}
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    imageMapRef.current = {};
+                                    onClose();
+                                }}
+                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs sm:text-sm rounded-lg transition-colors font-medium"
+                            >
+                                취소
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={submitting || uploadingImage}
+                                className="px-5 py-2 bg-brand-accent hover:bg-brand-highlight text-white text-xs sm:text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30 whitespace-nowrap"
+                            >
+                                <Check size={16} />
+                                수정 완료
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -270,4 +280,4 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
     );
 }
 
-export default BoardWriteModal;
+export default BoardEditModal;

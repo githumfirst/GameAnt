@@ -1,9 +1,9 @@
-import { jsx, jsxs } from "react/jsx-runtime";
-import React, { useState, useEffect } from "react";
+import { jsx, jsxs, Fragment } from "react/jsx-runtime";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOMServer from "react-dom/server";
 import { StaticRouter } from "react-router";
 import { useParams, useNavigate, Link, Routes, Route } from "react-router-dom";
-import { ArrowLeft, Info, Minimize2, Maximize2, Play, Smartphone, User, Calendar, X, Edit3, Lock, Check, MessageSquare, Send, Trash2, FileText, PenTool, Search, Sparkles, Eye, ChevronLeft, ChevronRight, FileCode2, Gamepad, Globe, Gamepad2 } from "lucide-react";
+import { ArrowLeft, Info, Minimize2, Maximize2, Play, Smartphone, User, Calendar, X, Edit3, Lock, Loader2, Image, Check, MessageSquare, Send, Trash2, FileText, PenTool, Search, Sparkles, Eye, ChevronLeft, ChevronRight, FileCode2, Gamepad, Globe, Gamepad2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 const GamePlayer = () => {
   const { id } = useParams();
@@ -286,7 +286,69 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
   const [password, setPassword] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
+  const imageMapRef = useRef({});
   if (!isOpen) return null;
+  const handleImageUpload = (e) => {
+    var _a;
+    const file = (_a = e.target.files) == null ? void 0 : _a[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      return;
+    }
+    processImageFile(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+  const handlePaste = (e) => {
+    const clipboardData = e.clipboardData;
+    if (!clipboardData || !clipboardData.items) return;
+    for (let i = 0; i < clipboardData.items.length; i++) {
+      const item = clipboardData.items[i];
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          processImageFile(file);
+        }
+        break;
+      }
+    }
+  };
+  const processImageFile = (file) => {
+    setUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      var _a;
+      const base64Url = (_a = event.target) == null ? void 0 : _a.result;
+      if (base64Url && typeof base64Url === "string") {
+        const imgCount = Object.keys(imageMapRef.current).length + 1;
+        const shortcode = `![📷 첨부 이미지 ${imgCount}]`;
+        imageMapRef.current[shortcode] = base64Url;
+        const markdownTag = `
+
+${shortcode}
+
+`;
+        if (textareaRef.current) {
+          const start = textareaRef.current.selectionStart || content.length;
+          const end = textareaRef.current.selectionEnd || content.length;
+          const newContent = content.substring(0, start) + markdownTag + content.substring(end);
+          setContent(newContent);
+        } else {
+          setContent((prev) => prev + markdownTag);
+        }
+      }
+      setUploadingImage(false);
+    };
+    reader.onerror = () => {
+      alert("이미지를 불러오는데 실패했습니다.");
+      setUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !author.trim() || !password.trim() || !content.trim()) {
@@ -294,17 +356,17 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
       return;
     }
     setSubmitting(true);
+    let finalContent = content.trim();
+    for (const [alias, dataUrl] of Object.entries(imageMapRef.current)) {
+      finalContent = finalContent.split(alias).join(`![이미지](${dataUrl})`);
+    }
     const newPostObj = {
       id: Date.now(),
       title: title.trim(),
       author: author.trim(),
-      content: content.trim(),
+      content: finalContent,
       password: password.trim(),
-      created_at: (/* @__PURE__ */ new Date()).toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      })
+      created_at: (/* @__PURE__ */ new Date()).toISOString().substring(0, 10)
     };
     try {
       const res = await fetch("/api/posts", {
@@ -313,7 +375,7 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
         body: JSON.stringify({
           title: title.trim(),
           author: author.trim(),
-          content: content.trim(),
+          content: finalContent,
           password: password.trim()
         })
       });
@@ -331,23 +393,27 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
     setAuthor("");
     setPassword("");
     setContent("");
+    imageMapRef.current = {};
     setSubmitting(false);
     onClose();
   };
-  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative", children: [
+  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
     /* @__PURE__ */ jsx(
       "button",
       {
-        onClick: onClose,
+        onClick: () => {
+          imageMapRef.current = {};
+          onClose();
+        },
         className: "absolute top-5 right-5 text-slate-400 hover:text-white transition-colors",
         children: /* @__PURE__ */ jsx(X, { size: 20 })
       }
     ),
     /* @__PURE__ */ jsxs("h3", { className: "text-2xl font-bold text-white mb-6 flex items-center gap-2", children: [
       /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 24 }),
-      "자유 게시판 새 글 작성"
+      "ant@IT 새 글 작성"
     ] }),
-    /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-4", children: [
+    /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-5", children: [
       /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx("label", { className: "block text-xs font-semibold text-slate-400 mb-1", children: "글 제목" }),
         /* @__PURE__ */ jsx(
@@ -399,15 +465,51 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("label", { className: "block text-xs font-semibold text-slate-400 mb-1", children: "내용" }),
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-1.5", children: [
+          /* @__PURE__ */ jsxs("label", { className: "block text-xs font-semibold text-slate-400", children: [
+            "내용 ",
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] text-brand-highlight font-normal ml-2", children: "💡 캡처 후 Ctrl+V 로 바로 이미지 붙여넣기 가능!" })
+          ] }),
+          /* @__PURE__ */ jsx(
+            "button",
+            {
+              type: "button",
+              onClick: () => {
+                var _a;
+                return (_a = fileInputRef.current) == null ? void 0 : _a.click();
+              },
+              disabled: uploadingImage,
+              className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
+              children: uploadingImage ? /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Loader2, { size: 14, className: "animate-spin text-brand-accent" }),
+                "이미지 읽는 중..."
+              ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Image, { size: 14, className: "text-brand-accent" }),
+                "🖼️ 이미지 첨부"
+              ] })
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "file",
+              ref: fileInputRef,
+              onChange: handleImageUpload,
+              accept: "image/*",
+              className: "hidden"
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsx(
           "textarea",
           {
-            rows: 6,
-            placeholder: "자유롭게 글을 적어보세요...",
+            ref: textareaRef,
+            rows: 8,
+            onPaste: handlePaste,
+            placeholder: "글을 작성해 보세요. [Windows+Shift+S]로 캡처 후 [Ctrl+V]를 누르면 커서 자리에 이미지가 즉시 붙여넣어집니다.",
             value: content,
             onChange: (e) => setContent(e.target.value),
-            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none"
+            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none leading-relaxed font-mono text-xs sm:text-sm"
           }
         )
       ] }),
@@ -416,7 +518,10 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
           "button",
           {
             type: "button",
-            onClick: onClose,
+            onClick: () => {
+              imageMapRef.current = {};
+              onClose();
+            },
             className: "px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded-lg transition-colors font-medium",
             children: "취소"
           }
@@ -425,7 +530,7 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
           "button",
           {
             type: "submit",
-            disabled: submitting,
+            disabled: submitting || uploadingImage,
             className: "px-6 py-2.5 bg-brand-accent hover:bg-brand-highlight text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30",
             children: [
               /* @__PURE__ */ jsx(Check, { size: 18 }),
@@ -433,6 +538,266 @@ function BoardWriteModal({ isOpen, onClose, onPostCreated }) {
             ]
           }
         )
+      ] })
+    ] })
+  ] }) });
+}
+function BoardEditModal({ isOpen, onClose, post, onPostUpdated }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
+  const imageMapRef = useRef({});
+  useEffect(() => {
+    if (post && post.content) {
+      setTitle(post.title || "");
+      setPassword("");
+      setErrorMsg("");
+      imageMapRef.current = {};
+      let count = 1;
+      let displayContent = post.content;
+      const imageRegex = /!\[.*?\]\((data:image\/[^;]+;base64,[^\)]+)\)/g;
+      displayContent = displayContent.replace(imageRegex, (match, dataUrl) => {
+        const shortcode = `![📷 첨부 이미지 ${count++}]`;
+        imageMapRef.current[shortcode] = dataUrl;
+        return shortcode;
+      });
+      setContent(displayContent);
+    }
+  }, [post]);
+  if (!isOpen || !post) return null;
+  const handleImageUpload = (e) => {
+    var _a;
+    const file = (_a = e.target.files) == null ? void 0 : _a[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      return;
+    }
+    processImageFile(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+  const handlePaste = (e) => {
+    const clipboardData = e.clipboardData;
+    if (!clipboardData || !clipboardData.items) return;
+    for (let i = 0; i < clipboardData.items.length; i++) {
+      const item = clipboardData.items[i];
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          processImageFile(file);
+        }
+        break;
+      }
+    }
+  };
+  const processImageFile = (file) => {
+    setUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      var _a;
+      const base64Url = (_a = event.target) == null ? void 0 : _a.result;
+      if (base64Url && typeof base64Url === "string") {
+        const imgCount = Object.keys(imageMapRef.current).length + 1;
+        const shortcode = `![📷 첨부 이미지 ${imgCount}]`;
+        imageMapRef.current[shortcode] = base64Url;
+        const markdownTag = `
+
+${shortcode}
+
+`;
+        if (textareaRef.current) {
+          const start = textareaRef.current.selectionStart || content.length;
+          const end = textareaRef.current.selectionEnd || content.length;
+          const newContent = content.substring(0, start) + markdownTag + content.substring(end);
+          setContent(newContent);
+        } else {
+          setContent((prev) => prev + markdownTag);
+        }
+      }
+      setUploadingImage(false);
+    };
+    reader.onerror = () => {
+      alert("이미지를 불러오는데 실패했습니다.");
+      setUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim() || !password.trim()) {
+      setErrorMsg("비밀번호를 입력해 주세요.");
+      return;
+    }
+    setSubmitting(true);
+    setErrorMsg("");
+    let finalContent = content.trim();
+    for (const [alias, dataUrl] of Object.entries(imageMapRef.current)) {
+      finalContent = finalContent.split(alias).join(`![이미지](${dataUrl})`);
+    }
+    const rawId = post.rawId || String(post.id).replace(/^community-/, "");
+    try {
+      const res = await fetch(`/api/posts/${rawId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          content: finalContent,
+          password: password.trim()
+        })
+      });
+      if (res.status === 403) {
+        setErrorMsg("비밀번호가 일치하지 않습니다.");
+        setSubmitting(false);
+        return;
+      }
+    } catch (e2) {
+      if (post.password && post.password !== password.trim()) {
+        setErrorMsg("비밀번호가 일치하지 않습니다.");
+        setSubmitting(false);
+        return;
+      }
+    }
+    const updatedPost = {
+      ...post,
+      title: title.trim(),
+      content: finalContent
+    };
+    onPostUpdated(updatedPost);
+    imageMapRef.current = {};
+    setSubmitting(false);
+    onClose();
+  };
+  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/80 flex items-center justify-center z-[70] p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
+    /* @__PURE__ */ jsx(
+      "button",
+      {
+        onClick: () => {
+          imageMapRef.current = {};
+          onClose();
+        },
+        className: "absolute top-5 right-5 text-slate-400 hover:text-white transition-colors",
+        children: /* @__PURE__ */ jsx(X, { size: 20 })
+      }
+    ),
+    /* @__PURE__ */ jsxs("h3", { className: "text-2xl font-bold text-white mb-6 flex items-center gap-2", children: [
+      /* @__PURE__ */ jsx(Edit3, { className: "text-brand-accent", size: 24 }),
+      "게시글 수정하기"
+    ] }),
+    /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-5", children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("label", { className: "block text-xs font-semibold text-slate-400 mb-1", children: "글 제목" }),
+        /* @__PURE__ */ jsx(
+          "input",
+          {
+            type: "text",
+            placeholder: "제목을 입력하세요",
+            value: title,
+            onChange: (e) => setTitle(e.target.value),
+            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent",
+            maxLength: 100
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-1.5", children: [
+          /* @__PURE__ */ jsxs("label", { className: "block text-xs font-semibold text-slate-400", children: [
+            "내용 ",
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] text-brand-highlight font-normal ml-2", children: "💡 캡처 후 Ctrl+V 로 바로 이미지 붙여넣기 가능!" })
+          ] }),
+          /* @__PURE__ */ jsx(
+            "button",
+            {
+              type: "button",
+              onClick: () => {
+                var _a;
+                return (_a = fileInputRef.current) == null ? void 0 : _a.click();
+              },
+              disabled: uploadingImage,
+              className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold transition-all border border-slate-600 shadow-sm",
+              children: uploadingImage ? /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Loader2, { size: 14, className: "animate-spin text-brand-accent" }),
+                "이미지 읽는 중..."
+              ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Image, { size: 14, className: "text-brand-accent" }),
+                "🖼️ 이미지 추가 첨부"
+              ] })
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "file",
+              ref: fileInputRef,
+              onChange: handleImageUpload,
+              accept: "image/*",
+              className: "hidden"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx(
+          "textarea",
+          {
+            ref: textareaRef,
+            rows: 8,
+            onPaste: handlePaste,
+            placeholder: "수정할 본문 내용을 입력하세요.",
+            value: content,
+            onChange: (e) => setContent(e.target.value),
+            className: "w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent resize-none leading-relaxed font-mono text-xs sm:text-sm"
+          }
+        )
+      ] }),
+      errorMsg && /* @__PURE__ */ jsx("p", { className: "text-xs font-semibold text-red-400 text-right", children: errorMsg }),
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-end items-center gap-3 pt-2", children: [
+        /* @__PURE__ */ jsxs("div", { className: "relative w-full sm:w-60", children: [
+          /* @__PURE__ */ jsx(Lock, { className: "absolute left-3 top-2.5 h-4 w-4 text-slate-500" }),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "password",
+              placeholder: "비밀번호 입력",
+              value: password,
+              onChange: (e) => {
+                setPassword(e.target.value);
+                if (errorMsg) setErrorMsg("");
+              },
+              className: "w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-accent",
+              maxLength: 20
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 w-full sm:w-auto justify-end", children: [
+          /* @__PURE__ */ jsx(
+            "button",
+            {
+              type: "button",
+              onClick: () => {
+                imageMapRef.current = {};
+                onClose();
+              },
+              className: "px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs sm:text-sm rounded-lg transition-colors font-medium",
+              children: "취소"
+            }
+          ),
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              type: "submit",
+              disabled: submitting || uploadingImage,
+              className: "px-5 py-2 bg-brand-accent hover:bg-brand-highlight text-white text-xs sm:text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-brand-accent/30 whitespace-nowrap",
+              children: [
+                /* @__PURE__ */ jsx(Check, { size: 16 }),
+                "수정 완료"
+              ]
+            }
+          )
+        ] })
       ] })
     ] })
   ] }) });
@@ -695,6 +1060,25 @@ function getCommentCount(post) {
   }
   return post.comment_count || 0;
 }
+function formatDate(dateStr) {
+  if (!dateStr) return (/* @__PURE__ */ new Date()).toISOString().substring(0, 10);
+  const s = String(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const matches = s.match(/\d+/g);
+  if (matches && matches.length >= 3) {
+    const y = matches[0];
+    const m = matches[1].padStart(2, "0");
+    const d = matches[2].padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  if (matches && matches.length === 2) {
+    const y = matches[0];
+    const m = matches[1].padStart(2, "0");
+    const todayD = (/* @__PURE__ */ new Date()).getDate().toString().padStart(2, "0");
+    return `${y}-${m}-${todayD}`;
+  }
+  return s.substring(0, 10);
+}
 function getViewCount$1(postId, defaultViews = 15) {
   try {
     const local = localStorage.getItem(`views_${postId}`);
@@ -760,6 +1144,7 @@ function DevLogList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ open: false, postId: null, password: "" });
   const [deleteError, setDeleteError] = useState("");
@@ -886,7 +1271,23 @@ function DevLogList() {
     setDeleteModal({ open: false, postId: null, password: "" });
     setDeleteError("");
   };
-  const allUnifiedPosts = [...staticPosts, ...communityPosts];
+  const parseDateScore = (post) => {
+    if (!post) return 0;
+    if (!post.isSSG && post.rawId) {
+      const numericId = Number(post.rawId);
+      if (!isNaN(numericId) && numericId > 1e7) {
+        return numericId;
+      }
+    }
+    const cleanDate = String(post.date || "").replace(/\./g, "-").replace(/\s+/g, "").replace(/-+$/, "");
+    const timestamp = new Date(cleanDate).getTime();
+    return isNaN(timestamp) ? 0 : timestamp;
+  };
+  const allUnifiedPosts = [...communityPosts, ...staticPosts].sort((a, b) => {
+    const scoreA = parseDateScore(a);
+    const scoreB = parseDateScore(b);
+    return scoreB - scoreA;
+  });
   const filteredPosts = allUnifiedPosts.filter(
     (post) => post.title.toLowerCase().includes(searchTerm.toLowerCase()) || post.writer.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -977,7 +1378,7 @@ function DevLogList() {
               /* @__PURE__ */ jsx(Eye, { size: 12, className: "text-slate-500" }),
               post.views || 1
             ] }) }),
-            /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-xs text-slate-400", children: post.date })
+            /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-xs text-slate-400 font-mono", children: formatDate(post.date) })
           ] }, post.id);
         }) : /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: "5", className: "px-6 py-12 text-center text-slate-500 text-sm", children: "게시글이 없습니다. [글쓰기] 버튼을 눌러 첫 번째 글을 등록해 보세요!" }) }) })
       ] }) }) }),
@@ -1030,6 +1431,27 @@ function DevLogList() {
         onPostCreated: handlePostCreated
       }
     ),
+    /* @__PURE__ */ jsx(
+      BoardEditModal,
+      {
+        isOpen: isEditModalOpen,
+        onClose: () => setIsEditModalOpen(false),
+        post: selectedPost,
+        onPostUpdated: (updatedPost) => {
+          setSelectedPost(updatedPost);
+          setCommunityPosts((prev) => prev.map((p) => p.id === updatedPost.id ? updatedPost : p));
+          const local = localStorage.getItem("community_posts");
+          if (local) {
+            try {
+              const parsed = JSON.parse(local);
+              const updatedList = parsed.map((p) => p.id === updatedPost.id ? updatedPost : p);
+              localStorage.setItem("community_posts", JSON.stringify(updatedList));
+            } catch (e) {
+            }
+          }
+        }
+      }
+    ),
     selectedPost && /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto", children: [
       /* @__PURE__ */ jsx(
         "button",
@@ -1062,21 +1484,58 @@ function DevLogList() {
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsx("span", { children: selectedPost.date }),
-          !selectedPost.isSSG && /* @__PURE__ */ jsxs(
-            "button",
-            {
-              onClick: () => setDeleteModal({ open: true, postId: selectedPost.id, password: "" }),
-              className: "text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1",
-              children: [
-                /* @__PURE__ */ jsx(Trash2, { size: 12 }),
-                " 삭제"
-              ]
-            }
-          )
+          /* @__PURE__ */ jsx("span", { className: "font-mono", children: formatDate(selectedPost.date) }),
+          !selectedPost.isSSG && /* @__PURE__ */ jsxs(Fragment, { children: [
+            /* @__PURE__ */ jsxs(
+              "button",
+              {
+                onClick: () => setIsEditModalOpen(true),
+                className: "text-slate-400 hover:text-brand-accent transition-colors flex items-center gap-1 font-semibold",
+                children: [
+                  /* @__PURE__ */ jsx(Edit3, { size: 12 }),
+                  " 수정"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxs(
+              "button",
+              {
+                onClick: () => setDeleteModal({ open: true, postId: selectedPost.id, password: "" }),
+                className: "text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1",
+                children: [
+                  /* @__PURE__ */ jsx(Trash2, { size: 12 }),
+                  " 삭제"
+                ]
+              }
+            )
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "text-slate-200 text-sm whitespace-pre-wrap leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40", children: selectedPost.content }),
+      /* @__PURE__ */ jsx("div", { className: "prose prose-invert prose-slate max-w-none text-slate-200 text-sm leading-relaxed mb-10 bg-slate-900/50 p-4 rounded-xl border border-slate-700/40 prose-img:rounded-xl prose-img:max-h-96 prose-img:mx-auto", children: /* @__PURE__ */ jsx(
+        ReactMarkdown,
+        {
+          urlTransform: (url) => url,
+          components: {
+            a: ({ node, href, children, ...props }) => /* @__PURE__ */ jsx(
+              "a",
+              {
+                href,
+                target: "_blank",
+                rel: "noopener noreferrer",
+                onClick: (e) => {
+                  e.preventDefault();
+                  window.open(href, "_blank", "width=1024,height=800,scrollbars=yes,resizable=yes");
+                },
+                className: "text-brand-highlight underline hover:text-brand-accent transition-colors font-semibold cursor-pointer",
+                title: "클릭 시 새 창(사이즈 조절 가능)에서 연결됩니다",
+                ...props,
+                children
+              }
+            )
+          },
+          children: selectedPost.content ? selectedPost.content.replace(/(^|[\s\n])(https?:\/\/[^\s\n\)<>]+)/g, "$1[$2]($2)") : ""
+        }
+      ) }),
       /* @__PURE__ */ jsx(CommentSection, { postId: selectedPost.id })
     ] }) }),
     deleteModal.open && /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl", children: [

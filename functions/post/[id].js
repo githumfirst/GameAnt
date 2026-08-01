@@ -25,6 +25,8 @@ export async function onRequestGet(context) {
         }
     }
 
+    const parsedContentHtml = renderMarkdownToHtml(content);
+
     // Build complete, crawler-friendly HTML string on Cloudflare Edge
     const html = `<!DOCTYPE html>
 <html lang="ko">
@@ -52,8 +54,8 @@ export async function onRequestGet(context) {
                             <span>작성일: ${date}</span>
                         </div>
                     </header>
-                    <div className="prose prose-invert max-w-none text-slate-200 text-base leading-relaxed whitespace-pre-wrap mt-8">
-                        ${escapeHtml(content)}
+                    <div className="prose prose-invert max-w-none text-slate-200 text-base leading-relaxed mt-8">
+                        ${parsedContentHtml}
                     </div>
                 </article>
             </div>
@@ -79,4 +81,23 @@ function escapeHtml(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function renderMarkdownToHtml(text) {
+    if (!text) return '';
+    let escaped = escapeHtml(text);
+
+    // Convert markdown images ![alt](src) into <img> tags
+    escaped = escaped.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+        return `<img src="${src}" alt="${alt}" class="rounded-xl my-6 max-w-full shadow-xl mx-auto block" />`;
+    });
+
+    // Auto convert plain URLs into <a> tags with resizable popup open window handler
+    escaped = escaped.replace(/(^|[\s\n])(https?:\/\/[^\s\n\)<>]+)/g, (match, prefix, url) => {
+        return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank', 'width=1024,height=800,scrollbars=yes,resizable=yes'); return false;" class="text-sky-400 underline font-semibold cursor-pointer">${url}</a>`;
+    });
+
+    // Convert newlines to paragraphs
+    const paragraphs = escaped.split('\n\n').map(p => `<p class="mb-4 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`);
+    return paragraphs.join('');
 }
