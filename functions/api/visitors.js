@@ -12,7 +12,10 @@ export async function onRequestGet(context) {
     }
 
     try {
-        const todayStr = new Date().toISOString().substring(0, 10);
+        // Korea Standard Time (KST, UTC+9) date YYYY-MM-DD
+        const now = new Date();
+        const kstNow = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+        const todayStr = kstNow.toISOString().substring(0, 10);
 
         // Ensure table exists
         await env.DB.prepare(
