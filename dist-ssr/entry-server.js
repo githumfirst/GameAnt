@@ -1409,11 +1409,22 @@ const initialGames = [
     last_updated: "2026-03-14"
   }
 ];
+function getInitialVisitorStats() {
+  try {
+    const local = localStorage.getItem("visitor_stats");
+    if (local) {
+      const parsed = JSON.parse(local);
+      if (parsed.total && parsed.today) return parsed;
+    }
+  } catch (e) {
+  }
+  return { total: 1280, today: 35 };
+}
 function Home() {
   const [games, setGames] = useState(initialGames || []);
   const [mainTab, setMainTab] = useState("itlog");
   const [gameFilter, setGameFilter] = useState("all");
-  const [visitorStats, setVisitorStats] = useState({ total: 1280, today: 35 });
+  const [visitorStats, setVisitorStats] = useState(() => getInitialVisitorStats());
   const navigate = useNavigate();
   useEffect(() => {
     fetch("/data/games.json").then((res) => res.json()).then((data) => setGames(data)).catch((err) => console.error("Failed to load games:", err));

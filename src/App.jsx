@@ -7,11 +7,22 @@ import DevLogDetail from './pages/DevLogDetail';
 
 import initialGames from '../public/data/games.json';
 
+function getInitialVisitorStats() {
+    try {
+        const local = localStorage.getItem('visitor_stats');
+        if (local) {
+            const parsed = JSON.parse(local);
+            if (parsed.total && parsed.today) return parsed;
+        }
+    } catch (e) { }
+    return { total: 1280, today: 35 };
+}
+
 function Home() {
     const [games, setGames] = useState(initialGames || []);
     const [mainTab, setMainTab] = useState('itlog'); // 'itlog' (default) | 'game'
     const [gameFilter, setGameFilter] = useState('all'); // 'all', 'android', 'unique'
-    const [visitorStats, setVisitorStats] = useState({ total: 1280, today: 35 });
+    const [visitorStats, setVisitorStats] = useState(() => getInitialVisitorStats());
     const navigate = useNavigate();
 
     useEffect(() => {
